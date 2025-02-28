@@ -1,0 +1,58 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    environment:
+      - DATABASE_NAME=Banking
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=banking123
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DJANGO_SETTINGS_MODULE=backend.settings
+      - PYTHONPATH=/app
+    networks:
+      - app-network
+
+  react-native:
+    build: ./BankingForStudents
+    container_name: frontend
+    ports:
+      - "8081:8081"
+      - "19000:19000"
+      - "19001:19001"
+      - "19002:19002"
+    volumes:
+      - ./BankingForStudents:/app
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  db:
+      image: postgres:15-alpine
+      ports:
+        - "5433:5432"
+      environment:
+        POSTGRES_DB: Banking
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: banking123
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      networks:
+        - app-network
+
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
