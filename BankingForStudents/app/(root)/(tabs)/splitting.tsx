@@ -25,6 +25,11 @@ const Splitting = () => {
         setModalVisible(true);  // Show modal
     };
 
+    const MyEvents = () => {
+        console.log("Events")
+        router.replace("/events/myevents");
+    };
+
     const handleScanAction = () => {
         if (modalType === "create") {
             console.log("Scanning Bill..."); // Handle scanning for Create Bill
@@ -32,10 +37,11 @@ const Splitting = () => {
             console.log("Scanning QR Code..."); // Handle scanning for Join Bill
         }
         setModalVisible(false); // Close modal after scanning
+        router.replace("/bill/create-bill");
     };
 
     const handleCreateBill = () => {
-        router.replace("/create-bill");
+        router.replace("/bill/create-bill");
         setModalVisible(false); // Close modal after creating bill
     };
 
@@ -47,13 +53,19 @@ const Splitting = () => {
             {/* Create Bill and Join Bill Buttons */}
             <View className="flex-1 items-center justify-center">
                 <TouchableOpacity
-                    className="bg-primary p-6 mt-3 mb-[15vh] rounded-lg items-center shadow-md"
+                    className="bg-primary p-6 my-3 rounded-lg items-center shadow-md"
+                    onPress={MyEvents}
+                >
+                    <Text className="text-white text-sm font-semibold">Events</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    className="bg-primary p-6 my-3 rounded-lg items-center shadow-md"
                     onPress={CreateBill}
                 >
                     <Text className="text-white text-sm font-semibold">Create Bill</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    className="bg-primary p-6 mt-3 mb-[15vh] rounded-lg items-center shadow-md"
+                    className="bg-primary p-6 my-3 rounded-lg items-center shadow-md"
                     onPress={JoinBill}
                 >
                     <Text className="text-white text-sm font-semibold">Join Bill</Text>

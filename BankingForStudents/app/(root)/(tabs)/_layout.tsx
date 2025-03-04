@@ -103,6 +103,42 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="events/[id]"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="events/[id]"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="events/myevents"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="events/myevents"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="events/new"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="events/new"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="bill/create-bill"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/create-bill"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };
