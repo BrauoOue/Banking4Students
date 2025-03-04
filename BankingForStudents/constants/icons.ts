@@ -31,6 +31,11 @@ import swim from "../assets/icons/swim.png";
 import wifi from "../assets/icons/wifi.png";
 import location from "../assets/icons/location.png";
 import edit from "../assets/icons/edit.png";
+import coins from "../assets/icons/coins.png";
+import accept from "../assets/icons/accept.png";
+import deny from "../assets/icons/deny.png";
+import receipt from "../assets/icons/receipt.png";
+import compass from "../assets/icons/compass.png";
 
 export default {
   google,
@@ -66,4 +71,9 @@ export default {
   wifi,
   location,
   edit,
+  coins,
+  accept,
+  deny,
+  receipt,
+  compass,
 };

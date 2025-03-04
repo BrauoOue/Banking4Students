@@ -10,7 +10,7 @@ const Profile = () => {
   };
 
   const handleLogout = () => {
-    console.log("User logged out");
+    console.log("Sakam motor so krilja!");
   };
 
   return (

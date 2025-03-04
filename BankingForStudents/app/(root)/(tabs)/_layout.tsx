@@ -1,72 +1,110 @@
-import { Tabs } from "expo-router";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
+import {Tabs} from "expo-router";
+import {Image, ImageSourcePropType, Text, View, TouchableOpacity} from "react-native";
 
 import icons from "@/constants/icons";
+import images from "@/constants/images"; // Assuming your logo is in images.ts
 
 const TabIcon = ({
-  focused,
-  icon,
-  title,
-}: {
-  focused: boolean;
-  icon: ImageSourcePropType;
-  title: string;
+                     focused,
+                     icon,
+                     title,
+                 }: {
+    focused: boolean;
+    icon: ImageSourcePropType;
+    title: string;
 }) => (
-  <View className="flex-1 mt-3 flex flex-col items-center">
-    <Image
-      source={icon}
-      tintColor={focused ? "#0061FF" : "#666876"}
-      resizeMode="contain"
-      className="size-6"
-    />
-    <Text
-      className={`${
-        focused
-          ? "text-primary-300 font-rubik-medium"
-          : "text-black-200 font-rubik"
-      } text-xs w-full text-center mt-1`}
-    >
-      {title}
-    </Text>
-  </View>
+    <View className="flex-1 mt-3 flex flex-col items-center">
+        <Image
+            source={icon}
+            tintColor={focused ? "#0061FF" : "#666876"}
+            resizeMode="contain"
+            className="size-6"
+        />
+        <Text
+            className={`${
+                focused
+                    ? "text-primary-300 font-rubik-medium"
+                    : "text-black-200 font-rubik"
+            } text-xs w-full text-center mt-1`}
+        >
+            {title}
+        </Text>
+    </View>
 );
 
 const TabsLayout = () => {
-  return (
-    <Tabs
-      screenOptions={{
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: "white",
-          position: "absolute",
-          borderTopColor: "#0061FF1A",
-          borderTopWidth: 1,
-          minHeight: 70,
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.home} title="Home" />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <TabIcon focused={focused} icon={icons.person} title="Profile" />
-          ),
-        }}
-      />
-    </Tabs>
-  );
+    return (
+        <Tabs
+            screenOptions={{
+                tabBarShowLabel: false,
+                tabBarStyle: {
+                    backgroundColor: "white",
+                    position: "absolute",
+                    borderTopColor: "#0061FF1A",
+                    borderTopWidth: 1,
+                    minHeight: 70,
+                },
+                headerStyle: {
+                    backgroundColor: "white",
+                    height: 40, // Adjust height as needed
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#0061FF1A",
+                },
+                headerTitle: () => (
+                    <View className="flex-row items-center justify-between w-full px-4">
+                        {/* Left Side - Logo */}
+                        <Image source={images.logo} className="w-24 h-10" resizeMode="contain"/>
+
+                        {/* Right Side - Number & Icon */}
+                        <View className="flex-row items-center">
+                            <Text className="text-lg font-rubik-bold text-black-300 mr-2">121</Text>
+                            <TouchableOpacity>
+                                <Image source={icons.coins} className="w-6 h-6" resizeMode="contain"/>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ),
+                headerTitleAlign: "center", // Optional: Center the header content
+            }}
+        >
+            <Tabs.Screen
+                name="index"
+                options={{
+                    title: "Home",
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.home} title="Home"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="splitting"
+                options={{
+                    title: "Bill Splitting",
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.receipt} title="Bill Splitting"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="explore"
+                options={{
+                    title: "Explore",
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.compass} title="Explore"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: "Profile",
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="Profile"/>
+                    ),
+                }}
+            />
+        </Tabs>
+    );
 };
 
 export default TabsLayout;
