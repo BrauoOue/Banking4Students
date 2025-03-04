@@ -19,7 +19,7 @@ const SignIn = () => {
 
     const handleLogin = async () => {
         setIsLogged(true)
-        router.push("/"); // Redirect to Home
+        router.replace("/"); // Redirect to Home
     };
 
     return (

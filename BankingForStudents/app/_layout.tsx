@@ -1,13 +1,10 @@
 import {SplashScreen, Stack, useRouter} from "expo-router";
 import {useFonts} from "expo-font";
-import { View, ActivityIndicator } from "react-native";
-
 import "./globals.css"
 import {useEffect, useState} from "react";
 import GlobalProvider from "@/lib/global-provider";
 
 export default function RootLayout() {
-    const router = useRouter();
     const [isMounted, setIsMounted] = useState(false);
 
     const [fontsLoaded] = useFonts({
