@@ -8,16 +8,8 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app
-    depends_on:
-      - db
-    environment:
-      - DATABASE_NAME=Banking
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=banking123
-      - DATABASE_HOST=db
-      - DATABASE_PORT=5432
-      - DJANGO_SETTINGS_MODULE=backend.settings
-      - PYTHONPATH=/app
+    # depends_on:
+    #   - db
     networks:
       - app-network
 
@@ -36,22 +28,22 @@ services:
     networks:
       - app-network
 
-  db:
-      image: postgres:15-alpine
-      ports:
-        - "5433:5432"
-      environment:
-        POSTGRES_DB: Banking
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: banking123
-      volumes:
-        - postgres_data:/var/lib/postgresql/data
-      networks:
-        - app-network
+  # db:
+  #     image: postgres:15-alpine
+  #     ports:
+  #       - "5433:5432"
+  #     environment:
+  #       POSTGRES_DB: Banking
+  #       POSTGRES_USER: postgres
+  #       POSTGRES_PASSWORD: banking123
+  #     volumes:
+  #       - postgres_data:/var/lib/postgresql/data
+  #     networks:
+  #       - app-network
 
 
-volumes:
-  postgres_data:
+# volumes:
+#   postgres_data:
 
 networks:
   app-network:

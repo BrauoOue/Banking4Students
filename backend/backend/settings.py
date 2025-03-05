@@ -38,7 +38,14 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-    'api',
+    
+    'main',
+    'cashstuffing',
+    'claimhub',
+    'forecast',
+    'owents',
+    'subscription',
+    'virtualpool',
 ]
 
 MIDDLEWARE = [
@@ -77,12 +84,8 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Banking',
-        'USER': 'postgres',
-        'PASSWORD': 'banking123',
-        'HOST': 'db',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -128,4 +131,6 @@ CORS_ALLOW_ALL_ORIGINS = True # TODO remove this in production
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://localhost:8080",
+    "http://localhost:8081",
 ]
