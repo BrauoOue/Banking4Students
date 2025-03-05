@@ -54,12 +54,6 @@ const Splitting = () => {
             <View className="flex-1 items-center justify-center">
                 <TouchableOpacity
                     className="bg-primary p-6 my-3 rounded-lg items-center shadow-md"
-                    onPress={MyEvents}
-                >
-                    <Text className="text-white text-sm font-semibold">Events</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    className="bg-primary p-6 my-3 rounded-lg items-center shadow-md"
                     onPress={CreateBill}
                 >
                     <Text className="text-white text-sm font-semibold">Create Bill</Text>

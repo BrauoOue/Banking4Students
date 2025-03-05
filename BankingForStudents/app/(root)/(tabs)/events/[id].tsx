@@ -1,26 +1,25 @@
-import React, { useState } from "react";
-import { Modal, View, Text, TouchableOpacity, TextInput } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Modal, View, Text, TouchableOpacity, TextInput, ScrollView, Dimensions } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Picker } from "@react-native-picker/picker";
 
-// Mock event data
 const events = [
     {
         id: "1",
         name: "Dinner Party",
         transactions: [
-            { id: "1", sender: "Me", receiver: "Nikola J.", amount: 200 },
-            { id: "2", sender: "Gorazd F.", receiver: "Viktor K.", amount: 12 },
-            { id: "3", sender: "Viktor K.", receiver: "Me", amount: 45 }
+            { id: "1", sender: "Me", receiver: "Nikola J.", amount: 200, title: "Jabolko" },
+            { id: "2", sender: "Gorazd F.", receiver: "Viktor K.", amount: 12, title: "Jabolko" },
+            { id: "3", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" }
         ]
     },
     {
         id: "2",
         name: "Weekend Trip",
         transactions: [
-            { id: "4", sender: "John D.", receiver: "Sarah L.", amount: 80 },
-            { id: "5", sender: "Me", receiver: "Gorazd F.", amount: 150 },
-            { id: "6", sender: "Nikola J.", receiver: "Me", amount: 30 }
+            { id: "4", sender: "John D.", receiver: "Sarah L.", amount: 80, title: "Jabolko" },
+            { id: "5", sender: "Me", receiver: "Gorazd F.", amount: 150, title: "Jabolko" },
+            { id: "6", sender: "Nikola J.", receiver: "Me", amount: 30, title: "Jabolko" }
         ]
     }
 ];
@@ -29,10 +28,40 @@ const Event = () => {
     const { id } = useLocalSearchParams();
     const router = useRouter();
     const [isModalVisible, setModalVisible] = useState(false);
-    const [newTransaction, setNewTransaction] = useState({ sender: "Me", receiver: "Nikola J.", amount: "" });
+    const [newTransaction, setNewTransaction] = useState({ sender: "Me", receiver: "Nikola J.", amount: "", title: "" });
+    const [stats, setStats] = useState({ owed: [], owing: [] });
 
     // Find the event
     const event = events.find((e) => e.id === id);
+
+    useEffect(() => {
+        if (event) {
+            calculateStats();
+        }
+    }, [event]);
+
+    const calculateStats = () => {
+        const balances = {};
+        event.transactions.forEach(transaction => {
+            if (transaction.sender === "Me") {
+                balances[transaction.receiver] = (balances[transaction.receiver] || 0) - transaction.amount;
+            } else if (transaction.receiver === "Me") {
+                balances[transaction.sender] = (balances[transaction.sender] || 0) + transaction.amount;
+            }
+        });
+
+        const owed = [];
+        const owing = [];
+        for (const [person, amount] of Object.entries(balances)) {
+            if (amount > 0) {
+                owed.push({ person, amount });
+            } else if (amount < 0) {
+                owing.push({ person, amount: -amount });
+            }
+        }
+
+        setStats({ owed, owing });
+    };
 
     if (!event) {
         return (
@@ -47,14 +76,16 @@ const Event = () => {
     };
 
     const handleAddTransaction = () => {
-        if (!newTransaction.amount) return;
+        if (!newTransaction.amount || !newTransaction.title) return;
         event.transactions.push({
             id: (event.transactions.length + 1).toString(),
             sender: newTransaction.sender,
             receiver: newTransaction.receiver,
-            amount: parseFloat(newTransaction.amount)
+            amount: parseFloat(newTransaction.amount),
+            title: newTransaction.title
         });
-        setNewTransaction({ sender: "Me", receiver: "Nikola J.", amount: "" });
+        setNewTransaction({ sender: "Me", receiver: "Nikola J.", amount: "", title: "" });
+        calculateStats();
         toggleModal();
     };
 
@@ -69,13 +100,34 @@ const Event = () => {
             </View>
 
             {/* Transactions List */}
-            {event.transactions.map((item) => (
-                <View key={item.id} className="bg-gray-100 p-4 mb-2 rounded-lg">
-                    <Text className="text-base">
-                        {item.sender} → {item.receiver} <Text className="font-bold">${item.amount}</Text>
-                    </Text>
+            <ScrollView className="mb-0">
+                {event.transactions.map((item) => (
+                    <View key={item.id} className="bg-gray-100 p-4 mb-2 rounded-lg">
+                        <Text className="text-base">
+                            {item.sender} → {item.receiver}, for: {item.title} <Text className="font-bold">${item.amount}</Text>
+                        </Text>
+                    </View>
+                ))}
+            </ScrollView>
+
+            {/* Stats Section */}
+            <View className="flex-1">
+                <Text className="text-lg font-bold mb-6">Summary</Text>
+                <View className="flex-row justify-between">
+                    <View className="bg-green-100 p-4 rounded-lg flex-1 mr-2">
+                        <Text className="font-bold mb-2">Owed to you:</Text>
+                        {stats.owing.map((item, index) => (
+                            <Text key={index}>{item.person}: ${item.amount.toFixed(2)}</Text>
+                        ))}
+                    </View>
+                    <View className="bg-red-100 p-4 rounded-lg flex-1 ml-2">
+                        <Text className="font-bold mb-2">You owe:</Text>
+                        {stats.owed.map((item, index) => (
+                            <Text key={index}>{item.person}: ${item.amount.toFixed(2)}</Text>
+                        ))}
+                    </View>
                 </View>
-            ))}
+            </View>
 
             {/* Add Transaction Modal */}
             <Modal visible={isModalVisible} transparent animationType="slide">
@@ -115,6 +167,15 @@ const Event = () => {
                             keyboardType="numeric"
                             value={newTransaction.amount}
                             onChangeText={(text) => setNewTransaction({ ...newTransaction, amount: text })}
+                        />
+
+                        {/* Title Input */}
+                        <Text className="text-sm mb-1 mt-3">Title:</Text>
+                        <TextInput
+                            className="border border-gray-300 p-2 rounded"
+                            placeholder="Enter title"
+                            value={newTransaction.title}
+                            onChangeText={(text) => setNewTransaction({ ...newTransaction, title: text })}
                         />
 
                         {/* Buttons */}

@@ -86,6 +86,14 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen
+                name="events/myevents"
+                options={{
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.bell} title="Events"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="explore"
                 options={{
                     title: "Explore",
@@ -109,15 +117,6 @@ const TabsLayout = () => {
                     href: null,
                     tabBarIcon: ({focused}) => (
                         <TabIcon focused={focused} icon={icons.person} title="events/[id]"/>
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="events/myevents"
-                options={{
-                    href: null,
-                    tabBarIcon: ({focused}) => (
-                        <TabIcon focused={focused} icon={icons.person} title="events/myevents"/>
                     ),
                 }}
             />
