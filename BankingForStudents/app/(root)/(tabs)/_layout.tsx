@@ -46,7 +46,7 @@ const TabsLayout = () => {
                 },
                 headerStyle: {
                     backgroundColor: "white",
-                    height: 65, // Adjusted height for iOS
+                    height: 45, // Adjusted height for iOS
                     borderBottomWidth: 1,
                     borderBottomColor: "#0061FF1A",
                 },
