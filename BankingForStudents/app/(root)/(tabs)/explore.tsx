@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     View,
     Text,
@@ -6,14 +6,14 @@ import {
     ScrollView,
     Image,
     Modal,
+    StyleSheet,
 } from "react-native";
 import icons from "@/constants/icons";
 
 const Explore = () => {
     const [activeTab, setActiveTab] = useState("Partnerships");
     const [selectedCard, setSelectedCard] = useState(null);
-    const [showQRCode, setShowQRCode] = useState(false);
-    const [showEnrollConfirmation, setShowEnrollConfirmation] = useState(false);
+    const [modalState, setModalState] = useState("details"); // "details", "qrcode", or "confirmation"
 
     const partnershipsCards = [
         {
@@ -70,45 +70,38 @@ const Explore = () => {
     ];
 
     const handleClaim = () => {
-        setShowQRCode(true);
+        setModalState("qrcode");
     };
 
     const handleEnroll = () => {
-        setShowEnrollConfirmation(true);
+        setModalState("confirmation");
     };
 
     const closeModal = () => {
         setSelectedCard(null);
-        setShowQRCode(false);
-        setShowEnrollConfirmation(false)
+        setModalState("details");
     };
 
     return (
-        <View style={{flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor: "white"}}>
+        <View style={styles.container}>
             {/* Header Tabs */}
-            <View
-                style={{
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    marginBottom: 16,
-                }}
-            >
+            <View style={styles.headerTabs}>
                 <TouchableOpacity onPress={() => setActiveTab("Partnerships")}>
                     <Text
-                        style={{
-                            fontSize: 18,
-                            fontWeight: activeTab === "Partnerships" ? "bold" : "normal",
-                        }}
+                        style={[
+                            styles.tabText,
+                            activeTab === "Partnerships" && styles.activeTabText,
+                        ]}
                     >
                         Partnerships
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setActiveTab("Services")}>
                     <Text
-                        style={{
-                            fontSize: 18,
-                            fontWeight: activeTab === "Services" ? "bold" : "normal",
-                        }}
+                        style={[
+                            styles.tabText,
+                            activeTab === "Services" && styles.activeTabText,
+                        ]}
                     >
                         Services
                     </Text>
@@ -117,243 +110,117 @@ const Explore = () => {
 
             {/* Cards Section */}
             <ScrollView>
-                {(activeTab === "Partnerships"
-                        ? partnershipsCards
-                        : servicesCards
-                ).map((card) => (
+                {(activeTab === "Partnerships" ? partnershipsCards : servicesCards).map((card) => (
                     <TouchableOpacity
                         key={card.id}
-                        style={{
-                            backgroundColor: "transparent",
-                            marginBottom: 16,
-                            borderWidth: 1,
-                            borderColor: "#ccc",
-                            borderRadius: 12,
-                            overflow: "hidden",
+                        style={styles.card}
+                        onPress={() => {
+                            setSelectedCard(card);
+                            setModalState("details");
                         }}
-                        onPress={() => setSelectedCard(card)}
                     >
                         {/* Card Image */}
                         {activeTab === "Partnerships" && (
-                            <Image
-                                source={{uri: card.img}}
-                                style={{
-                                    width: "100%",
-                                    height: 100,
-                                    borderTopLeftRadius: 0,
-                                    borderTopRightRadius: 0,
-                                }}
-                            />
+                            <Image source={{ uri: card.img }} style={styles.cardImage} />
                         )}
 
                         {/* Card Content */}
-                        <View style={{padding: 16}}>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    justifyContent: "space-between",
-                                    alignItems: "center",
-                                    marginBottom: 8,
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 18,
-                                        fontWeight: "bold",
-                                        color: "#333",
-                                    }}
-                                >
-                                    {card.title}
-                                </Text>
-                                <Text style={{fontSize: 14, color: "#666"}}>
-                                    {card.date}
-                                </Text>
-                            </View>
+                        <View style={styles.cardContent}>
+                            <Text style={styles.cardTitle}>{card.title}</Text>
+                            <Text style={styles.cardDate}>{card.date}</Text>
 
                             {/* Description */}
                             {activeTab === "Partnerships" ? (
-                                <Text style={{fontSize: 16, color: "#555", marginBottom: 8}}>
-                                    {card.discount}
-                                </Text>
+                                <Text style={styles.cardDescription}>{card.discount}</Text>
                             ) : (
                                 <View>
-                                    <Text
-                                        style={{fontSize: 16, color: "#555", marginBottom: 4}}
-                                    >
-                                        {card.duration}
-                                    </Text>
-                                    <Text
-                                        style={{fontSize: 16, color: "#555", marginBottom: 4}}
-                                    >
-                                        {card.frequency}
-                                    </Text>
+                                    <Text style={styles.cardDescription}>{card.duration}</Text>
+                                    <Text style={styles.cardDescription}>{card.frequency}</Text>
                                 </View>
                             )}
 
                             {/* Points */}
-                            <View style={{alignItems: "flex-end"}}>
-                                <Text style={{fontSize: 14, color: "#666"}}>
-                                    {card.points}
-                                    <Image
-                                        source={icons.coins}
-                                        className="w-5 h-5"
-                                        resizeMode="contain"
-                                    />
-                                </Text>
-                            </View>
+                            <Text style={styles.cardPoints}>
+                                {card.points}
+                                <Image source={icons.coins} style={styles.coinIcon} />
+                            </Text>
                         </View>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
 
-            {/* Modal for Card Details */}
+            {/* Single Modal with Different Content Based on State */}
             {selectedCard && (
                 <Modal transparent={true} animationType="slide">
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "rgba(0,0,0,0.5)",
-                        }}
-                    >
-                        <View
-                            style={{
-                                width: "80%",
-                                backgroundColor: "#fff",
-                                borderRadius: 8,
-                                padding: 16,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    marginBottom: 8,
-                                }}
-                            >
-                                {selectedCard.title}
-                            </Text>
-                            {activeTab === "Partnerships" ? (
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            {/* Details State */}
+                            {modalState === "details" && (
                                 <>
-                                    <Image
-                                        source={{uri: selectedCard.img}}
-                                        style={{
-                                            width: "100%",
-                                            height: 150,
-                                            marginBottom: 8,
-                                            borderRadius: 8,
-                                        }}
-                                    />
-                                    <Text>{selectedCard.discount}</Text>
-                                    <Text>{selectedCard.date}</Text>
-                                    <Text
-                                        className="flex justify-between align-center"
-                                    >- {selectedCard.points}
-                                        <Image
-                                            source={icons.coins}
-                                            className="w-5 h-5"
-                                            resizeMode="contain"
-                                        />
-                                    </Text>
+                                    <Text style={styles.modalTitle}>{selectedCard.title}</Text>
 
-                                </>
-                            ) : (
-                                <>
-                                    <Text>Duration: {selectedCard.duration}</Text>
-                                    <Text>Frequency: {selectedCard.frequency}</Text>
-                                    <Text>Price: {selectedCard.points}
-                                        <Image
-                                            source={icons.coins}
-                                            className="w-5 h-5"
-                                            resizeMode="contain"
-                                        />
-                                    </Text>
-                                    <Text>Applicable until: {selectedCard.date}</Text>
-                                    <TouchableOpacity
-                                        onPress={handleEnroll}
-                                        style={{
-                                            backgroundColor: "#007BFF",
-                                            padding: 8,
-                                            borderRadius: 4,
-                                            marginTop: 16,
-                                        }}
-                                    >
-                                        <Text style={{color: "#fff", textAlign: "center"}}>
-                                            Enroll
-                                        </Text>
-                                    </TouchableOpacity>
+                                    {activeTab === "Partnerships" ? (
+                                        <>
+                                            <Image
+                                                source={{ uri: selectedCard.img }}
+                                                style={styles.modalImage}
+                                            />
+                                            <Text>{selectedCard.discount}</Text>
+                                            <Text>{selectedCard.date}</Text>
+                                            <Text>- {selectedCard.points} </Text>
+                                            <TouchableOpacity
+                                                style={styles.claimButton}
+                                                onPress={handleClaim}
+                                            >
+                                                <Text style={styles.claimButtonText}>Claim</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Text>Duration: {selectedCard.duration}</Text>
+                                            <Text>Frequency: {selectedCard.frequency}</Text>
+                                            <Text>Price: {selectedCard.points} </Text>
+                                            <Text>Applicable until: {selectedCard.date}</Text>
+                                            <TouchableOpacity
+                                                style={styles.enrollButton}
+                                                onPress={handleEnroll}
+                                            >
+                                                <Text style={styles.enrollButtonText}>Enroll</Text>
+                                            </TouchableOpacity>
+                                        </>
+                                    )}
                                 </>
                             )}
-                            <TouchableOpacity
-                                onPress={closeModal}
-                                style={{
-                                    backgroundColor: "#ccc",
-                                    padding: 8,
-                                    borderRadius: 4,
-                                    marginTop: 16,
-                                }}
-                            >
-                                <Text style={{color: "#fff", textAlign: "center"}}>
-                                    Close
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-            )}
-            {/* Confirmation Modal */}
-            {showEnrollConfirmation && selectedCard && (
-                <Modal transparent={true} animationType="slide">
-                    <View
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                            backgroundColor: "rgba(0,0,0,0.5)",
-                        }}
-                    >
-                        <View
-                            style={{
-                                width: "80%",
-                                backgroundColor: "#fff",
-                                borderRadius: 8,
-                                padding: 16,
-                            }}
-                        >
-                            <Text
-                                style={{
-                                    fontSize: 18,
-                                    fontWeight: "bold",
-                                    marginBottom: 8,
-                                    textAlign: "center",
-                                }}
-                            >
-                                Confirmation
-                            </Text>
-                            <Text style={{textAlign: "center", marginBottom: 16}}>
-                                Congrats, you enrolled in the {selectedCard.title}!
-                            </Text>
-                            <Text style={{textAlign: "center", marginBottom: 16}}>
-                                Contact tutor:
-                            </Text>
-                            <Text style={{textAlign: "center", marginBottom: 8}}>
-                                Email: {selectedCard.contactInfo?.email}
-                            </Text>
-                            <Text style={{textAlign: "center", marginBottom: 8}}>
-                                Phone: {selectedCard.contactInfo?.phone}
-                            </Text>
-                            <TouchableOpacity
-                                onPress={closeModal}
-                                style={{
-                                    backgroundColor: "#007BFF",
-                                    padding: 8,
-                                    borderRadius: 4,
-                                }}
-                            >
-                                <Text style={{color: "#fff", textAlign: "center"}}>
-                                    Close
-                                </Text>
+
+                            {/* QR Code State */}
+                            {modalState === "qrcode" && (
+                                <>
+                                    <Text style={styles.modalTitle}>QR Code</Text>
+                                    <Image
+                                        source={{
+                                            uri: "https://blog.tcea.org/wp-content/uploads/2022/05/qrcode_tcea.org-1.png",
+                                        }}
+                                        style={styles.qrCodeImage}
+                                    />
+                                </>
+                            )}
+
+                            {/* Confirmation State */}
+                            {modalState === "confirmation" && (
+                                <>
+                                    <Text style={styles.modalTitle}>Confirmation</Text>
+                                    <Text>
+                                        Congrats, you enrolled in the {selectedCard.title}!
+                                    </Text>
+                                    <Text>Contact tutor:</Text>
+                                    <Text>Email: {selectedCard.contactInfo?.email}</Text>
+                                    <Text>Phone: {selectedCard.contactInfo?.phone}</Text>
+                                </>
+                            )}
+
+                            {/* Close Button (appears in all states) */}
+                            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                                <Text style={styles.closeButtonText}>Close</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -362,5 +229,129 @@ const Explore = () => {
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        backgroundColor: "white",
+    },
+    headerTabs: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginBottom: 16,
+    },
+    tabText: {
+        fontSize: 18,
+        fontWeight: "normal",
+    },
+    activeTabText: {
+        fontWeight: "bold",
+    },
+    card: {
+        backgroundColor: "transparent",
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 12,
+        overflow: "hidden",
+    },
+    cardImage: {
+        width: "100%",
+        height: 100,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+    },
+    cardContent: {
+        padding: 16,
+    },
+    cardTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#333",
+    },
+    cardDate: {
+        fontSize: 14,
+        color: "#666",
+    },
+    cardDescription: {
+        fontSize: 16,
+        color: "#555",
+        marginBottom: 8,
+    },
+    cardPoints: {
+        fontSize: 14,
+        color: "#666",
+    },
+    coinIcon: {
+        width: 10,
+        height: 10,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(0,0,0,0.5)",
+    },
+    modalContent: {
+        width: "80%",
+        backgroundColor: "#fff",
+        borderRadius: 8,
+        padding: 16,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 16,
+    },
+    modalImage: {
+        width: "100%",
+        height: 150,
+        marginBottom: 16,
+        borderRadius: 8,
+    },
+    claimButton: {
+        backgroundColor: "#007BFF",
+        padding: 8,
+        borderRadius: 4,
+        marginTop: 16,
+        width: "100%",
+    },
+    claimButtonText: {
+        color: "#fff",
+        textAlign: "center",
+    },
+    enrollButton: {
+        backgroundColor: "#007BFF",
+        padding: 8,
+        borderRadius: 4,
+        marginTop: 16,
+        width: "100%",
+    },
+    enrollButtonText: {
+        color: "#fff",
+        textAlign: "center",
+    },
+    closeButton: {
+        backgroundColor: "#ccc",
+        padding: 8,
+        borderRadius: 4,
+        marginTop: 16,
+        width: "100%",
+    },
+    closeButtonText: {
+        color: "#fff",
+        textAlign: "center",
+    },
+    qrCodeImage: {
+        width: 150,
+        height: 150,
+        marginBottom: 16,
+    },
+});
 
 export default Explore;
