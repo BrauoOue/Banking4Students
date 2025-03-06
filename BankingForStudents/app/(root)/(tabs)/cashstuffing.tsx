@@ -107,6 +107,7 @@ const CashStuffing = () => {
               placeholder="Goal Name (e.g., Nike Pro 270)"
               value={newGoalName}
               onChangeText={setNewGoalName}
+              placeholderTextColor="grey"
             />
             <TextInput
               style={styles.input}
@@ -114,6 +115,7 @@ const CashStuffing = () => {
               keyboardType="numeric"
               value={newGoalTarget}
               onChangeText={setNewGoalTarget}
+              placeholderTextColor="grey"
             />
 
             <View style={styles.frequencyContainer}>
@@ -156,6 +158,7 @@ const CashStuffing = () => {
               placeholder="Amount per Frequency (e.g., 30)"
               keyboardType="numeric"
               value={amountPerFrequency}
+              placeholderTextColor="grey"
               onChangeText={setAmountPerFrequency}
             />
 
@@ -287,6 +290,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     fontSize: 16,
     color: "black",
+    
   },
   frequencyContainer: {
     flexDirection: "row",
