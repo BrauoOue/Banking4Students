@@ -106,6 +106,7 @@ export default function Index() {
         }
 
     };
+
     const handleCreateCard = () => {
         const newCard = {
             name,
