@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     menu: {
         backgroundColor: "white",
         borderRadius: 10,
-        marginBottom: 50,
+        marginBottom: 20,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         alignItems: "center",
+        marginBottom: 100,
     },
     logoutButtonText: {
         color: "white",
