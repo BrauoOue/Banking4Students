@@ -165,6 +165,15 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="futurePredictions"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="futurePredictions"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };
