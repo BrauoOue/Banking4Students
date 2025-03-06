@@ -148,6 +148,15 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="cashstuffing"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="cashstuffing"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };
