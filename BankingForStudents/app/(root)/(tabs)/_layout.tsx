@@ -211,6 +211,15 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen
+                name="notifications"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="notifications"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="transactions"
                 options={{
                     href: null,
