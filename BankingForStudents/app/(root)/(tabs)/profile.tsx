@@ -23,10 +23,10 @@ const Profile = () => {
     const menuItems = [
         { id: "notifications", label: "Notifications", icon: "bell", route: "/notifications" },
         { id: "transactions", label: "My Transactions", icon: "transaction", route: "/transactions" },
-        { id: "university", label: "My University", icon: "uni", route: "/my_uni" },
+        { id: "university", label: "My Uni", icon: "uni", route: "/my_uni" },
         { id: "subscriptions", label: "Subscriptions", icon: "subscription", route: "/subscriptions" },
-        { id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashStuffing" },
-        { id: "grants", label: "My Grants", icon: "grant", route: "/grants" },
+        { id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashstuffing" },
+        { id: "grants", label: "Grants", icon: "grant", route: "/grants" },
         {
             id: "futurePredictions",
             label: "Future Predictions",
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     menu: {
         backgroundColor: "white",
         borderRadius: 10,
-        marginBottom: 50,
+        marginBottom: 20,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         alignItems: "center",
+        marginBottom: 100,
     },
     logoutButtonText: {
         color: "white",

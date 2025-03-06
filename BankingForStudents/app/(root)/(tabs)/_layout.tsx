@@ -1,8 +1,7 @@
 import {Tabs} from "expo-router";
 import {Image, ImageSourcePropType, Text, View, TouchableOpacity} from "react-native";
-
 import icons from "@/constants/icons";
-import images from "@/constants/images"; // Assuming your logo is in images.ts
+import images from "@/constants/images";
 
 const TabIcon = ({
                      focused,
@@ -140,11 +139,38 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen
+                name="bill/pay-bill"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/pay-bill"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="my_uni"
                 options={{
                     href: null,
                     tabBarIcon: ({focused}) => (
                         <TabIcon focused={focused} icon={icons.person} title="my_uni"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="cashstuffing"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="cashstuffing"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="futurePredictions"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="futurePredictions"/>
                     ),
                 }}
             />

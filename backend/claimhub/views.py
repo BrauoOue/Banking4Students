@@ -1,11 +1,12 @@
-# ClaimHub/views.py
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from rest_framework import generics
-from main.models import Service, Product,Item, Student  # Adjust the app name if needed
+from rest_framework import generics, status
+from main.models import Service, Product, Item, Student,Company
+from main.models import Grant, StudentAppliesGrant
 from .serializers import ServiceSerializer, ProductSerializer
 from rest_framework.response import Response
 from django.utils import timezone
-from rest_framework import status
+from .serializers import GrantSerializer
 
 
 class ServiceListView(generics.ListAPIView):
@@ -15,7 +16,21 @@ class ServiceListView(generics.ListAPIView):
 class ProductListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    
+
+# New view to create a Service with the current user as creator.
+class ServiceCreateView(generics.CreateAPIView):
+    queryset = Service.objects.all()
+    serializer_class = ServiceSerializer
+
+    def perform_create(self, serializer):
+        # Here we assume that request.user is a Student.
+        # This automatically sets the 'student' field to the logged in user and the 'datetime' field to now.
+        serializer.save(student=self.request.user, datetime=timezone.now())
+
+# New view to create a Product.
+class ProductCreateView(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
 
 class PurchaseItemView(APIView):
     def post(self, request):
@@ -59,8 +74,6 @@ class PurchaseItemView(APIView):
         student.save()
         
         # If the purchased item is a Service, update its datetime to the current time.
-        # Because Service inherits from Item with the same primary key,
-        # we can try to fetch the Service instance by its pk.
         try:
             service_item = Service.objects.get(pk=item.pk)
             service_item.datetime = timezone.now()
@@ -102,7 +115,6 @@ class ItemDetailView(APIView):
         if not instance:
             return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
         
-        # Use the appropriate serializer based on instance type.
         if isinstance(instance, Service):
             serializer = ServiceSerializer(instance)
         else:
@@ -137,3 +149,62 @@ class ItemDetailView(APIView):
             return Response({"error": "Item not found."}, status=status.HTTP_404_NOT_FOUND)
         instance.delete()
         return Response({"message": "Item deleted successfully."}, status=status.HTTP_200_OK)
+    
+
+
+
+
+
+#######################         GRANTS
+
+
+# Create (publish) a new grant.
+class GrantCreateView(generics.CreateAPIView):
+    queryset = Grant.objects.all()
+    serializer_class = GrantSerializer
+
+    def perform_create(self, serializer):
+        # Retrieve the company using the company_id provided in the URL.
+        company_id = self.kwargs.get('company_id')
+        company = get_object_or_404(Company, pk=company_id)
+        serializer.save(company=company)
+
+# Get a list of all grants.
+class GrantListView(generics.ListAPIView):
+    queryset = Grant.objects.all()
+    serializer_class = GrantSerializer
+
+# Get, update, or delete a specific grant.
+class GrantDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Grant.objects.all()
+    serializer_class = GrantSerializer
+
+
+# ---------------------------------------------------------------------------
+# Student Grant Application View
+# ---------------------------------------------------------------------------
+
+class ApplyGrantView(APIView):
+    """
+    Endpoint for a student to apply to a grant.
+    Expects the grant id and the student id as part of the URL.
+    """
+    def post(self, request, grant_id, user_id):
+        # Get the grant or return 404 if not found.
+        grant = get_object_or_404(Grant, pk=grant_id)
+        # Get the student from the provided user_id.
+        student = get_object_or_404(Student, pk=user_id)
+
+        # Check if the student has already applied to this grant.
+        if StudentAppliesGrant.objects.filter(student=student, grant=grant).exists():
+            return Response(
+                {"error": "You have already applied to this grant."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Create the application record.
+        StudentAppliesGrant.objects.create(student=student, grant=grant)
+        return Response(
+            {"message": "Application submitted successfully."},
+            status=status.HTTP_201_CREATED
+        )
