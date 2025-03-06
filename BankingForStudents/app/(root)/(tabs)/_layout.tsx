@@ -174,6 +174,24 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="subscriptions"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="subscriptions"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="grants"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="grants"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };
