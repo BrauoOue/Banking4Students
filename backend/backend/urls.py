@@ -20,11 +20,11 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/main',include('main.urls')),
+    path('api/main/',include('main.urls')),
     path('api/cashstuffing',include('cashstuffing.urls')),
-    path('api/claimhub',include('claimhub.urls')),
-    path('api/forecast',include('forecast.urls')),
-    path('api/owents',include('owents.urls')),
-    path('api/subscription',include('subscription.urls')),
-    path('api/virtualpool',include('virtualpool.urls')),
+    path('api/claimhub/',include('claimhub.urls')),
+    path('api/forecast/',include('forecast.urls')),
+    path('api/owents/',include('owents.urls')),
+    path('api/subscription/',include('subscription.urls')),
+    path('api/virtualpool/',include('virtualpool.urls')),
 ]

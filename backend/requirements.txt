@@ -3,4 +3,8 @@ djangorestframework
 django-cors-headers
 # psycopg2
 openai
-Pillow
+pillow
+opencv-python
+numpy
+pytesseract
+
