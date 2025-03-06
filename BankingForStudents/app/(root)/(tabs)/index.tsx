@@ -136,6 +136,11 @@ export default function Index() {
           <TouchableOpacity
             key={index}
             className="align-center justify-center bg-accent p-3 rounded-lg w-20 items-center shadow-md shadow-accent"
+            onPress={() => {
+              if (action === "My Uni") {
+                router.replace("/my_uni");
+              }
+            }}
           >
             <Text className="text-white text-sm font-semibold text-center">
               {action}

@@ -90,7 +90,7 @@ const TabsLayout = () => {
                 name="events/myevents"
                 options={{
                     tabBarIcon: ({focused}) => (
-                        <TabIcon focused={focused} icon={icons.bell} title="Events"/>
+                        <TabIcon focused={focused} icon={icons.event} title="Events"/>
                     ),
                 }}
             />
@@ -136,6 +136,15 @@ const TabsLayout = () => {
                     href: null,
                     tabBarIcon: ({focused}) => (
                         <TabIcon focused={focused} icon={icons.person} title="bill/create-bill"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="my_uni"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="my_uni"/>
                     ),
                 }}
             />

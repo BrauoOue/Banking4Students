@@ -36,6 +36,12 @@ import accept from "../assets/icons/accept.png";
 import deny from "../assets/icons/deny.png";
 import receipt from "../assets/icons/receipt.png";
 import compass from "../assets/icons/compass.png";
+import event from "../assets/icons/event.png";
+import subscription from "../assets/icons/subscription.png";
+import uni from "../assets/icons/uni.png";
+import grant from "../assets/icons/grant.png";
+import transaction from "../assets/icons/transactions.png";
+import cash from "../assets/icons/cash.png";
 
 export default {
   google,
@@ -76,4 +82,10 @@ export default {
   deny,
   receipt,
   compass,
+  event,
+  cash,
+  transaction,
+  uni,
+  subscription,
+  grant
 };
