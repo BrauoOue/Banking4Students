@@ -132,7 +132,7 @@ export default function Index() {
     useEffect(() => {
         if (!isLogged) {
             const timeout = setTimeout(() => {
-                router.replace("/sign-in"); // TODO uncomment this
+                // router.replace("/sign-in"); // TODO uncomment this
             }, 100);
             return () => clearTimeout(timeout);
         }
