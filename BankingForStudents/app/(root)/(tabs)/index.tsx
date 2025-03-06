@@ -15,28 +15,97 @@ import icons from "@/constants/icons";
 import {Ionicons} from "@expo/vector-icons";
 
 export default function Index() {
-    const { user, setUser} = useGlobalContext();
+    const router = useRouter();
+    const {user, setUser, isLogged} = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [limit, setLimit] = useState("1000");
     const [userModalVisible, setUserModalVisible] = useState(false);
+    const [creditCards, setCreditCards] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [users, setUsers] = useState([]);
 
-    const users = [
-        {id: 0, name: "Nikola J."},
-        {id: 1, name: "Gorazd F."},
-        {id: 2, name: "Viktor K."}
-    ];
+    // fetchin users
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/main/user-list/`
+                );
 
-    // Toggle user selection
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json();
+                setUsers(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        if (isLogged) {
+            fetchData();
+        }
+    }, [isLogged]);
+
+    // fetchin credit cards
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/main/transaction-accounts/${user?.id}/`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json();
+                setCreditCards(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        if (isLogged) {
+            fetchData();
+        }
+    }, [user, isLogged]);
+
+    // fetchin transactions
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/main/transactions/${user?.email}/`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json();
+                setTransactions(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        if (isLogged) {
+            fetchData();
+        }
+    }, [user, isLogged]);
+
     const toggleUserSelection = (userId) => {
         if (selectedUsers.includes(userId)) {
             setSelectedUsers(selectedUsers.filter(id => id !== userId));
         } else {
             setSelectedUsers([...selectedUsers, userId]);
         }
-    };
 
+    };
     const handleCreateCard = () => {
         const newCard = {
             name,
@@ -49,18 +118,15 @@ export default function Index() {
             bank: name,
             number: "- Nikola J.\n- Viktor K.",
             balance: "$" + limit,
-            color: "bg-red-400"
         };
         setCreditCards((prevCreditCards) => [
             ...prevCreditCards,
-                mockCard,
+            mockCard,
         ])
         console.log("Created Virtual Card:", newCard);
         setModalVisible(false);
-    };
 
-    const router = useRouter();
-    const {isLogged} = useGlobalContext();
+    };
 
     useEffect(() => {
         if (!isLogged) {
@@ -70,54 +136,6 @@ export default function Index() {
             return () => clearTimeout(timeout);
         }
     }, []);
-
-    const [creditCards, setCreditCards] = useState([
-        {
-            id: "1",
-            bank: "Visa",
-            number: "**** 1234",
-            balance: "$2,450.50",
-            color: "bg-blue-500",
-        },
-        // {
-        //     id: "2",
-        //     bank: "MasterCard",
-        //     number: "**** 5678",
-        //     balance: "$1,875.20",
-        //     color: "bg-blue-700",
-        // },
-        // {
-        //     id: "3",
-        //     bank: "Amex",
-        //     number: "**** 9876",
-        //     balance: "$5,340.75",
-        //     color: "bg-green-600",
-        // },
-    ]);
-
-    const transactions = [
-        {
-            id: "1",
-            title: "Spotify Subscription",
-            amount: "-$9.99",
-            date: "Feb 25",
-            type: "debit",
-        },
-        {
-            id: "2",
-            title: "Freelance Payment",
-            amount: "+$500.00",
-            date: "Feb 22",
-            type: "credit",
-        },
-        {
-            id: "3",
-            title: "Grocery Shopping",
-            amount: "-$120.75",
-            date: "Feb 20",
-            type: "debit",
-        },
-    ];
 
     const requests = [
         {
@@ -150,6 +168,10 @@ export default function Index() {
         desc: "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
     };
 
+    function transformDate(date: string) {
+        return date.split("T")[0]
+    }
+
     return (
         <ScrollView className="flex-2 bg-white p-5">
             {/* Title */}
@@ -169,12 +191,12 @@ export default function Index() {
                 contentContainerStyle={{paddingBottom: 10}}
                 renderItem={({item}) => (
                     <View
-                        className={`w-64 h-40 p-5 rounded-lg ${item.color} m-2 shadow-lg`}
+                        className={`w-64 h-40 p-5 rounded-lg bg-accent m-2 shadow-lg`}
                     >
                         <Text className="text-white text-lg font-bold">{item.bank}</Text>
                         <Text className="text-white text-sm mt-2">{item.number}</Text>
                         <Text className="text-white text-2xl font-semibold mt-4">
-                            {item.balance}
+                            {"$" + item.balance}
                         </Text>
                     </View>
                 )}
@@ -191,8 +213,13 @@ export default function Index() {
                                 router.replace("/my_uni");
                             }
                             if (action == "Send") {
-                                console.log(user)
-                                router.replace("/explore")
+                                router.replace("/send")
+                            }
+                            if (action == "Request") {
+                                router.replace("/request")
+                            }
+                            if (action == "Cash Stuffing") {
+                                router.replace("/cashstuffing")
                             }
                         }}
                     >
@@ -215,18 +242,18 @@ export default function Index() {
                     >
                         <View>
                             <Text className="text-gray-900 font-semibold">
-                                {transaction.title}
+                                {transaction.category}
                             </Text>
-                            <Text className="text-gray-500 text-xs">{transaction.date}</Text>
+                            <Text className="text-gray-500 text-xs">{transformDate(transaction.date)}</Text>
                         </View>
                         <Text
                             className={`font-semibold ${
-                                transaction.type === "credit"
+                                transaction.type === "f"
                                     ? "text-green-600"
                                     : "text-red-500"
                             }`}
                         >
-                            {transaction.amount}
+                            {"$" + transaction.amount}
                         </Text>
                     </View>
                 ))}

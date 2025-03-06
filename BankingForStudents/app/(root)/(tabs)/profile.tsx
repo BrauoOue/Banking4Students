@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -7,33 +7,59 @@ import {
     StyleSheet,
     ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import {useRouter} from "expo-router";
 import icons from "@/constants/icons";
+import {useGlobalContext} from "@/lib/global-provider";
 
 const Profile = () => {
-    const user = {
-        name: "Филипс Комитоски",
-        email: "bravo.be.philips@hotmail.com",
-        accountNumber: "**** 0069",
-        balance: "5,240.00 ден.",
-        profileImage:
-            "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
-    };
+    const {user, setUser} = useGlobalContext();
+    const [cards, setCards] = useState([
+        {
+            "id": 2,
+            "number": "1324 5689",
+            "balance": "9790.00",
+            "bank": 2,
+            "bank_name": "NLB"
+        }
+    ])
+
+    useEffect(() => {
+        // Fetch data from the API
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:8000/api/main/transaction-accounts/${user?.id}/`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json(); // Parse the response as JSON
+                setCards(data); // Update the state with the fetched data
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // Handle errors (e.g., show a message to the user)
+            }
+        };
+
+        fetchData(); // Call the fetch function
+    }, []);
 
     const menuItems = [
-        { id: "notifications", label: "Notifications", icon: "bell", route: "/notifications" },
-        { id: "transactions", label: "My Transactions", icon: "transaction", route: "/transactions" },
-        { id: "university", label: "My Uni", icon: "uni", route: "/my_uni" },
-        { id: "subscriptions", label: "Subscriptions", icon: "subscription", route: "/subscriptions" },
-        { id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashstuffing" },
-        { id: "grants", label: "Grants", icon: "grant", route: "/grants" },
+        {id: "notifications", label: "Notifications", icon: "bell", route: "/notifications"},
+        {id: "transactions", label: "My Transactions", icon: "transaction", route: "/transactions"},
+        {id: "university", label: "My Uni", icon: "uni", route: "/my_uni"},
+        {id: "subscriptions", label: "Subscriptions", icon: "subscription", route: "/subscriptions"},
+        {id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashstuffing"},
+        {id: "grants", label: "Grants", icon: "grant", route: "/grants"},
         {
             id: "futurePredictions",
             label: "Future Predictions",
             icon: "bell",
             route: "/futurePredictions",
         },
-    ];  
+    ];
 
     const handleLogout = () => {
         console.log("Sakam motor so krilja!");
@@ -46,12 +72,12 @@ const Profile = () => {
             {/* Profile Header */}
             <View style={styles.header}>
                 <Image
-                    source={{ uri: user.profileImage }}
+                    source={{uri: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}}
                     style={styles.profileImage}
                 />
                 <View>
-                    <Text style={styles.userName}>{user.name}</Text>
-                    <Text style={styles.userEmail}>{user.email}</Text>
+                    <Text style={styles.userName}>{user?.name + " " + user?.surname}</Text>
+                    <Text style={styles.userEmail}>{user?.email}</Text>
                 </View>
             </View>
 
@@ -59,11 +85,11 @@ const Profile = () => {
             <View style={styles.accountInfo}>
                 <View style={styles.accountItem}>
                     <Text style={styles.accountLabel}>Default Card</Text>
-                    <Text style={styles.accountValue}>{user.accountNumber}</Text>
+                    <Text style={styles.accountValue}>{cards[0].number}</Text>
                 </View>
                 <View style={styles.accountItem}>
                     <Text style={styles.accountLabel}>Balance</Text>
-                    <Text style={styles.accountValue}>{user.balance}</Text>
+                    <Text style={styles.accountValue}>{"$" + cards[0].balance}</Text>
                 </View>
             </View>
 
@@ -80,7 +106,7 @@ const Profile = () => {
                             style={styles.menuItemIcon}
                         />
                         <Text style={styles.menuItemText}>{item.label}</Text>
-                        <Image source={icons.rightArrow} style={styles.menuItemArrow} />
+                        <Image source={icons.rightArrow} style={styles.menuItemArrow}/>
                     </TouchableOpacity>
                 ))}
             </View>
@@ -96,7 +122,7 @@ const Profile = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f4f4f4",
+        backgroundColor: "white",
         padding: 20,
     },
     header: {
@@ -107,7 +133,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 20,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 3,
@@ -134,7 +160,7 @@ const styles = StyleSheet.create({
         padding: 15,
         paddingBottom: 0,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 3,
@@ -158,7 +184,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 20,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 3,
