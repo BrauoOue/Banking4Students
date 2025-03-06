@@ -25,7 +25,7 @@ const Profile = () => {
         { id: "transactions", label: "My Transactions", icon: "transaction", route: "/transactions" },
         { id: "university", label: "My University", icon: "uni", route: "/my_uni" },
         { id: "subscriptions", label: "Subscriptions", icon: "subscription", route: "/subscriptions" },
-        { id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashStuffing" },
+        { id: "cashStuffing", label: "Cash stuffing", icon: "cash", route: "/cashstuffing" },
         { id: "grants", label: "My Grants", icon: "grant", route: "/grants" },
         {
             id: "futurePredictions",
