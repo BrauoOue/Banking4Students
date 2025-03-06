@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     View,
     Text,
@@ -84,7 +84,7 @@ const Explore = () => {
     };
 
     return (
-        <View style={{ flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor:"white" }}>
+        <View style={{flex: 1, paddingHorizontal: 16, paddingTop: 16, backgroundColor: "white"}}>
             {/* Header Tabs */}
             <View
                 style={{
@@ -118,8 +118,8 @@ const Explore = () => {
             {/* Cards Section */}
             <ScrollView>
                 {(activeTab === "Partnerships"
-                    ? partnershipsCards
-                    : servicesCards
+                        ? partnershipsCards
+                        : servicesCards
                 ).map((card) => (
                     <TouchableOpacity
                         key={card.id}
@@ -136,7 +136,7 @@ const Explore = () => {
                         {/* Card Image */}
                         {activeTab === "Partnerships" && (
                             <Image
-                                source={{ uri: card.img }}
+                                source={{uri: card.img}}
                                 style={{
                                     width: "100%",
                                     height: 100,
@@ -147,7 +147,7 @@ const Explore = () => {
                         )}
 
                         {/* Card Content */}
-                        <View style={{ padding: 16 }}>
+                        <View style={{padding: 16}}>
                             <View
                                 style={{
                                     flexDirection: "row",
@@ -165,25 +165,25 @@ const Explore = () => {
                                 >
                                     {card.title}
                                 </Text>
-                                <Text style={{ fontSize: 14, color: "#666" }}>
+                                <Text style={{fontSize: 14, color: "#666"}}>
                                     {card.date}
                                 </Text>
                             </View>
 
                             {/* Description */}
                             {activeTab === "Partnerships" ? (
-                                <Text style={{ fontSize: 16, color: "#555", marginBottom: 8 }}>
+                                <Text style={{fontSize: 16, color: "#555", marginBottom: 8}}>
                                     {card.discount}
                                 </Text>
                             ) : (
                                 <View>
                                     <Text
-                                        style={{ fontSize: 16, color: "#555", marginBottom: 4 }}
+                                        style={{fontSize: 16, color: "#555", marginBottom: 4}}
                                     >
                                         {card.duration}
                                     </Text>
                                     <Text
-                                        style={{ fontSize: 16, color: "#555", marginBottom: 4 }}
+                                        style={{fontSize: 16, color: "#555", marginBottom: 4}}
                                     >
                                         {card.frequency}
                                     </Text>
@@ -191,9 +191,14 @@ const Explore = () => {
                             )}
 
                             {/* Points */}
-                            <View style={{ alignItems: "flex-end" }}>
-                                <Text style={{ fontSize: 14, color: "#666" }}>
+                            <View style={{alignItems: "flex-end"}}>
+                                <Text style={{fontSize: 14, color: "#666"}}>
                                     {card.points}
+                                    <Image
+                                        source={icons.coins}
+                                        className="w-5 h-5"
+                                        resizeMode="contain"
+                                    />
                                 </Text>
                             </View>
                         </View>
@@ -232,7 +237,7 @@ const Explore = () => {
                             {activeTab === "Partnerships" ? (
                                 <>
                                     <Image
-                                        source={{ uri: selectedCard.img }}
+                                        source={{uri: selectedCard.img}}
                                         style={{
                                             width: "100%",
                                             height: 150,
@@ -242,14 +247,28 @@ const Explore = () => {
                                     />
                                     <Text>{selectedCard.discount}</Text>
                                     <Text>{selectedCard.date}</Text>
-                                    <Text>-{selectedCard.points}</Text>
+                                    <Text
+                                        className="flex justify-between align-center"
+                                    >- {selectedCard.points}
+                                        <Image
+                                            source={icons.coins}
+                                            className="w-5 h-5"
+                                            resizeMode="contain"
+                                        />
+                                    </Text>
 
                                 </>
                             ) : (
                                 <>
                                     <Text>Duration: {selectedCard.duration}</Text>
                                     <Text>Frequency: {selectedCard.frequency}</Text>
-                                    <Text>Price: {selectedCard.points} points</Text>
+                                    <Text>Price: {selectedCard.points}
+                                        <Image
+                                            source={icons.coins}
+                                            className="w-5 h-5"
+                                            resizeMode="contain"
+                                        />
+                                    </Text>
                                     <Text>Applicable until: {selectedCard.date}</Text>
                                     <TouchableOpacity
                                         onPress={handleEnroll}
@@ -260,7 +279,7 @@ const Explore = () => {
                                             marginTop: 16,
                                         }}
                                     >
-                                        <Text style={{ color: "#fff", textAlign: "center" }}>
+                                        <Text style={{color: "#fff", textAlign: "center"}}>
                                             Enroll
                                         </Text>
                                     </TouchableOpacity>
@@ -275,7 +294,7 @@ const Explore = () => {
                                     marginTop: 16,
                                 }}
                             >
-                                <Text style={{ color: "#fff", textAlign: "center" }}>
+                                <Text style={{color: "#fff", textAlign: "center"}}>
                                     Close
                                 </Text>
                             </TouchableOpacity>
@@ -312,16 +331,16 @@ const Explore = () => {
                             >
                                 Confirmation
                             </Text>
-                            <Text style={{ textAlign: "center", marginBottom: 16 }}>
+                            <Text style={{textAlign: "center", marginBottom: 16}}>
                                 Congrats, you enrolled in the {selectedCard.title}!
                             </Text>
-                            <Text style={{ textAlign: "center", marginBottom: 16 }}>
+                            <Text style={{textAlign: "center", marginBottom: 16}}>
                                 Contact tutor:
                             </Text>
-                            <Text style={{ textAlign: "center", marginBottom: 8 }}>
+                            <Text style={{textAlign: "center", marginBottom: 8}}>
                                 Email: {selectedCard.contactInfo?.email}
                             </Text>
-                            <Text style={{ textAlign: "center", marginBottom: 8 }}>
+                            <Text style={{textAlign: "center", marginBottom: 8}}>
                                 Phone: {selectedCard.contactInfo?.phone}
                             </Text>
                             <TouchableOpacity
@@ -332,7 +351,7 @@ const Explore = () => {
                                     borderRadius: 4,
                                 }}
                             >
-                                <Text style={{ color: "#fff", textAlign: "center" }}>
+                                <Text style={{color: "#fff", textAlign: "center"}}>
                                     Close
                                 </Text>
                             </TouchableOpacity>

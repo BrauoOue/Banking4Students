@@ -10,7 +10,11 @@ const events = [
         transactions: [
             { id: "1", sender: "Me", receiver: "Nikola J.", amount: 200, title: "Jabolko" },
             { id: "2", sender: "Gorazd F.", receiver: "Viktor K.", amount: 12, title: "Jabolko" },
-            { id: "3", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" }
+            { id: "3", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" },
+            { id: "4", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" },
+            { id: "5", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" },
+            { id: "7", sender: "Me", receiver: "Gorazd F.", amount: 20, title: "Jabolko" },
+            { id: "6", sender: "Viktor K.", receiver: "Me", amount: 45, title: "Jabolko" }
         ]
     },
     {
@@ -90,7 +94,7 @@ const Event = () => {
     };
 
     return (
-        <View className="flex-1 bg-white px-4 pt-10">
+        <View className="flex-1 bg-white px-4 pt-5">
             {/* Header */}
             <View className="flex-row justify-between items-center mb-4">
                 <Text className="text-xl font-bold">{event.name}</Text>
@@ -100,9 +104,9 @@ const Event = () => {
             </View>
 
             {/* Transactions List */}
-            <ScrollView className="mb-0">
+            <ScrollView className="mb-0 h-[20%]">
                 {event.transactions.map((item) => (
-                    <View key={item.id} className="bg-gray-100 p-4 mb-2 rounded-lg">
+                    <View key={item.id} className="bg-accent/40 p-4 mb-2 rounded-lg">
                         <Text className="text-base">
                             {item.sender} → {item.receiver}, for: {item.title} <Text className="font-bold">${item.amount}</Text>
                         </Text>
