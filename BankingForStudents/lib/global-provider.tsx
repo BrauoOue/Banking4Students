@@ -1,15 +1,20 @@
-import React, {createContext, useContext, ReactNode, useState} from "react";
-import { Redirect } from "expo-router";
+import React, { createContext, useContext, ReactNode, useState } from "react";
 
 interface GlobalContextType {
   isLogged: boolean;
+  setIsLogged: (value: boolean) => void;
+  user: User | null;
+  setUser: (user: User | null) => void; // Added setter
 }
 
 interface User {
-  $id: string;
+  id: number; // Fixed property name (from $id to id)
   name: string;
   email: string;
-  avatar: string;
+  surname: string;
+  ssn: string;
+  points: number;
+  attending_university: number;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -19,16 +24,11 @@ interface GlobalProviderProps {
 }
 
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
-
-  const [isLogged, setIsLogged ] = useState(false);
+  const [isLogged, setIsLogged] = useState(false);
+  const [user, setUser] = useState<User | null>(null); // Added state
 
   return (
-    <GlobalContext.Provider
-      value={{
-        isLogged,
-        setIsLogged,
-      }}
-    >
+    <GlobalContext.Provider value={{ isLogged, setIsLogged, user, setUser }}>
       {children}
     </GlobalContext.Provider>
   );

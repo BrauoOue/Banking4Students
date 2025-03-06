@@ -13,9 +13,9 @@ import {useRouter} from "expo-router";
 import {useGlobalContext} from "@/lib/global-provider";
 import icons from "@/constants/icons";
 import {Ionicons} from "@expo/vector-icons";
-import {Picker} from "@react-native-picker/picker";
 
 export default function Index() {
+    const { user, setUser} = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -65,7 +65,7 @@ export default function Index() {
     useEffect(() => {
         if (!isLogged) {
             const timeout = setTimeout(() => {
-                // router.replace("/sign-in"); // TODO uncomment this
+                router.replace("/sign-in"); // TODO uncomment this
             }, 100);
             return () => clearTimeout(timeout);
         }
@@ -189,6 +189,10 @@ export default function Index() {
                         onPress={() => {
                             if (action === "My Uni") {
                                 router.replace("/my_uni");
+                            }
+                            if (action == "Send") {
+                                console.log(user)
+                                router.replace("/explore")
                             }
                         }}
                     >

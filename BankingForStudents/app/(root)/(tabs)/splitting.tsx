@@ -83,7 +83,7 @@ const Splitting = () => {
                         <Picker
                             selectedValue={selectedCard}
                             onValueChange={(itemValue) => setSelectedCard(itemValue)}
-                            className="mt-2"
+                            className="mt-2 border border-gray-300"
                         >
                             {creditCards.map((card) => (
                                 <Picker.Item key={card.id} label={card.bank} value={card.id}/>
