@@ -1,8 +1,14 @@
 from django.db import models
 
 ###############################################################################
-# 1) Simple “base” models (no parents)
+# 1) Base models and new super-entity: TransOwner
 ###############################################################################
+
+class TransOwner(models.Model):
+    # New super entity for User and University (no extra fields)
+    def __str__(self):
+        return f"TransOwner {self.pk}"
+
 
 class Bank(models.Model):
     name = models.CharField(max_length=100)
@@ -32,6 +38,7 @@ class VirtualCard(models.Model):
     def __str__(self):
         return f"{self.name} (limit={self.limit})"
 
+
 class Notification(models.Model):
     content = models.TextField()
     user = models.ForeignKey(
@@ -41,23 +48,22 @@ class Notification(models.Model):
     )
 
     def __str__(self):
-        # Display a truncated snippet of the content for readability
         return f"Notification for {self.user.email}: {self.content[:20]}..."
 
 
 ###############################################################################
-# 2) User, Student, Company (multi-table inheritance)
+# 2) User, Student, Company (multi‐table inheritance)
 ###############################################################################
 
-class User(models.Model):
+class User(TransOwner):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
 
     def __str__(self):
         return self.email
 
+
 class Company(User):
-    # In multi-table inheritance, "id" is inherited from User
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -65,28 +71,18 @@ class Company(User):
 
 
 ###############################################################################
-# 3) University has a 1:1 with TransactionAcc (defined below),
-#    so we can define University here with a OneToOneField that
-#    points to 'TransactionAcc' via string reference.
+# 3) University now inherits from TransOwner (removed its transaction_acc field)
 ###############################################################################
 
-class University(models.Model):
+class University(TransOwner):
     name = models.CharField(max_length=100)
-    # 1:1 with TransactionAcc
-    transaction_acc = models.OneToOneField(
-        "TransactionAcc",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name="university_account"
-    )
 
     def __str__(self):
         return self.name
 
 
 ###############################################################################
-# 4) TransactionAcc - has N:1 with Bank, N:1 with User
+# 4) TransactionAcc now points to TransOwner instead of User
 ###############################################################################
 
 class TransactionAcc(models.Model):
@@ -97,12 +93,10 @@ class TransactionAcc(models.Model):
         on_delete=models.CASCADE,
         related_name="transaction_accounts"
     )
-    user = models.ForeignKey(
-        User,
+    trans_owner = models.ForeignKey(
+        TransOwner,
         on_delete=models.CASCADE,
-        related_name="transaction_accounts",
-        null=True,
-        blank=True
+        related_name="transaction_accounts"
     )
 
     def __str__(self):
@@ -110,11 +104,10 @@ class TransactionAcc(models.Model):
 
 
 ###############################################################################
-# 5) Transaction -> OwentTransaction (multi-table inheritance)
+# 5) Transaction and OwentTransaction (multi‐table inheritance)
 ###############################################################################
 
 class Transaction(models.Model):
-    # Foreign keys to TransactionAcc (N:1 both sides)
     transaction_acc_pays = models.ForeignKey(
         TransactionAcc,
         on_delete=models.CASCADE,
@@ -125,7 +118,7 @@ class Transaction(models.Model):
         on_delete=models.CASCADE,
         related_name="transactions_in"
     )
-    # title = models.CharField(max_length=100) msm ne treba (uncomment ako treba)
+    title = models.CharField(max_length=100, blank=True, default='')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateTimeField()
     type = models.CharField(max_length=50)
@@ -134,11 +127,10 @@ class Transaction(models.Model):
     def __str__(self):
         return f"{self.title} ({self.amount})"
 
+
 class OwentTransaction(Transaction):
     owent_title = models.CharField(max_length=100, blank=True)
-    # OwentTransaction inherits id/PK from Transaction
     # N:1 with Student and N:1 with Owent
-
     student = models.ForeignKey(
         "Student",
         on_delete=models.CASCADE,
@@ -231,8 +223,7 @@ class BucketItem(models.Model):
 class Grant(models.Model):
     name = models.CharField(max_length=100)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    # N:1 with Company
-    company = models.ForeignKey( 
+    company = models.ForeignKey(
         Company,
         on_delete=models.CASCADE,
         related_name="grants"
@@ -243,7 +234,7 @@ class Grant(models.Model):
 
 
 ###############################################################################
-# 10) Item -> Service, Product (multi-table inheritance)
+# 10) Item -> Service, Product (multi‐table inheritance)
 ###############################################################################
 
 class Item(models.Model):
@@ -254,10 +245,9 @@ class Item(models.Model):
     def __str__(self):
         return self.name
 
+
 class Service(Item):
-    # Inherits PK from Item
     datetime = models.DateTimeField()
-    # N:1 with Student
     student = models.ForeignKey(
         "Student",
         on_delete=models.CASCADE,
@@ -267,32 +257,28 @@ class Service(Item):
     def __str__(self):
         return f"Service {self.name}"
 
+
 class Product(Item):
-    # Inherits PK from Item
-    # no extra fields in the ER diagram
     def __str__(self):
         return f"Product {self.name}"
 
 
 ###############################################################################
-# 11) Student (inherits from User, referencing other models)
+# 11) Student (inherits from User)
 ###############################################################################
 
 class Student(User):
-    # In multi-table inheritance, Student has a OneToOneField to User behind the scenes
     name = models.CharField(max_length=100)
     surname = models.CharField(max_length=100)
     ssn = models.CharField(max_length=20)
     points = models.IntegerField(default=0)
-    # N:1 with University
-    university = models.ForeignKey(
+    attending_university = models.ForeignKey(
         University,
         on_delete=models.CASCADE,
         related_name="students",
         null=True,
         blank=True
     )
-    # 1:1 with Card for "default card"
     card_default = models.OneToOneField(
         Card,
         on_delete=models.SET_NULL,
@@ -300,26 +286,20 @@ class Student(User):
         blank=True,
         related_name="default_for_student"
     )
-
-    # M:N "friend_with" – self-referential
-    # We'll define the through model below (FriendWith).
     friends = models.ManyToManyField(
         "self",
         symmetrical=True,
-        through="FriendWith",
-        related_name="friend_of"
+        through="FriendWith"
     )
 
     def __str__(self):
         return f"Student {self.name} {self.surname} ({self.email})"
 
 
-
 ###############################################################################
-# 12) Now define the many-to-many "through" tables with any extra fields
+# 12) Existing many-to-many "through" models
 ###############################################################################
 
-# friend_with(#id_user_student_1*, #id_user_student_2*)
 class FriendWith(models.Model):
     student1 = models.ForeignKey(
         Student,
@@ -339,7 +319,6 @@ class FriendWith(models.Model):
         return f"{self.student1} <-> {self.student2}"
 
 
-# student_applies_grant(#id_grant*, #id_user_student*)
 class StudentAppliesGrant(models.Model):
     student = models.ForeignKey(
         Student,
@@ -353,13 +332,7 @@ class StudentAppliesGrant(models.Model):
     def __str__(self):
         return f"{self.student} applies for {self.grant}"
 
-# For convenience, you can also define a ManyToManyField on Student or Grant:
-# class Grant(models.Model):
-#     ...
-#     students = models.ManyToManyField(Student, through='StudentAppliesGrant', related_name='grants_applied')
 
-
-# student_participates_owent(#id_user_student*, #id_owent*)
 class StudentParticipatesOwent(models.Model):
     student = models.ForeignKey(
         Student,
@@ -374,7 +347,6 @@ class StudentParticipatesOwent(models.Model):
         return f"{self.student} participates in {self.owent}"
 
 
-# student_buys_service(#id_user_student*, #id_item_service*)
 class StudentBuysService(models.Model):
     student = models.ForeignKey(
         Student,
@@ -389,7 +361,6 @@ class StudentBuysService(models.Model):
         return f"{self.student} buys service {self.service}"
 
 
-# student_buys_product(#id_user_student*, #id_item_product*, qr_code_image, date, is_used)
 class StudentBuysProduct(models.Model):
     student = models.ForeignKey(
         Student,
@@ -399,7 +370,7 @@ class StudentBuysProduct(models.Model):
         Product,
         on_delete=models.CASCADE
     )
-    qr_code_image = models.ImageField(upload_to="../ qr_codes/", null=True, blank=True)
+    qr_code_image = models.ImageField(upload_to="../qr_codes/", null=True, blank=True)
     date = models.DateTimeField()
     is_used = models.BooleanField(default=False)
 
@@ -407,7 +378,6 @@ class StudentBuysProduct(models.Model):
         return f"{self.student} buys product {self.product}"
 
 
-# card_operates_virtual_card(#id_card*, #id_virtual_card*)
 class CardOperatesVirtualCard(models.Model):
     card = models.ForeignKey(
         Card,
@@ -422,7 +392,6 @@ class CardOperatesVirtualCard(models.Model):
         return f"{self.card} operates {self.virtual_card}"
 
 
-# card_subscribes_subscription_entity(#id_card*, #id_subscription_entity*, date_from, date_to, amount, status)
 class CardSubscribesSubscriptionEntity(models.Model):
     card = models.ForeignKey(
         Card,
@@ -441,7 +410,6 @@ class CardSubscribesSubscriptionEntity(models.Model):
         return f"{self.card} subscribes {self.subscription_entity} [{self.status}]"
 
 
-# uni_has_document(#id_university*, #id_document*, price)
 class UniHasDocument(models.Model):
     university = models.ForeignKey(
         University,
@@ -455,5 +423,58 @@ class UniHasDocument(models.Model):
 
     def __str__(self):
         return f"{self.university} has doc {self.document} (${self.price})"
-    
-    
+
+
+###############################################################################
+# 13) New models for ReceiptParty and the ternary relationships
+###############################################################################
+
+class ReceiptParty(models.Model):
+    # As defined, only a primary key is needed.
+    def __str__(self):
+        return f"ReceiptParty {self.pk}"
+
+
+class StudentCreatesPartyUsesTransaction(models.Model):
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name="created_parties"
+    )
+    receipt_party = models.ForeignKey(
+        ReceiptParty,
+        on_delete=models.CASCADE,
+        related_name="creator"
+    )
+    transaction_acc = models.ForeignKey(
+        TransactionAcc,
+        on_delete=models.CASCADE,
+        related_name="party_transactions"
+    )
+
+    def __str__(self):
+        return f"{self.student} created party {self.receipt_party} with {self.transaction_acc}"
+
+
+class StudentParticipatesPartyUsesTransaction(models.Model):
+    student = models.ForeignKey(
+        Student,
+        on_delete=models.CASCADE,
+        related_name="participating_parties"
+    )
+    receipt_party = models.ForeignKey(
+        ReceiptParty,
+        on_delete=models.CASCADE,
+        related_name="participants"
+    )
+    transaction_acc = models.ForeignKey(
+        TransactionAcc,
+        on_delete=models.CASCADE,
+        related_name="participation_transactions"
+    )
+    owed_money = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=50)
+
+    def __str__(self):
+        return (f"{self.student} participates in {self.receipt_party} with "
+                f"{self.transaction_acc} (owed: {self.owed_money}, status: {self.status})")

@@ -2,7 +2,7 @@
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww14620\viewh7360\viewkind0
+\margl1440\margr1440\vieww29740\viewh16100\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
 \f0\fs42 \cf0 I am coding a project in django and I need help to create the models from a database relational model that I have manually created. I will attach a picture of the ER diagram and also the relations in the following text.\
@@ -15,30 +15,28 @@ Every foreign key in the tables created only from the entities (not M:N relation
 \
 After some relation definitions I will add a comment that explains the foreign keys in that particular row. That will be done in between the characters \'93~~\'94. Example:  ~comment~\
 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 (# before the attribute means primary key and * after the attribute means foreign key)\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 User(#id_user,email,password)\
-Student(#id_user*,name,surname,ssn,points,id_university*,id_card_default*)  ~student is inherited from User and therefore the pk is the same and used as fk, N:1 relationship with University, 1:1 relationship with Card since it has only one default card~\
+(# before the attribute means primary key and * after the attribute means foreign key)\
+Trans_User(#id_trans_user)\
+User(#id_user*,email,password)\
+Student(#id_trans_user*,name,surname,ssn,points,id_university*,id_card_default*)  ~student is inherited from User and therefore the pk is the same and used as fk, N:1 relationship with University, 1:1 relationship with Card since it has only one default card~\
 Company(#id_user*,name)  ~Company is inherited from User and therefore the pk is the same and used as fk~\
-University (#id_university,name,id_transaction_acc*) ~1:1 realationship with Transaction_acc ~\
+University (#id_university*,name)\
 Document(#id_document,name) \
-Transaction_acc(#id_transaction_acc,number,balance,id_bank*, id_user*) ~N:1 relationship with bank, N:1 relationship with User~\
+Transaction_acc(#id_transaction_acc,number,balance,id_bank*, id_trans_owner*) ~N:1 relationship with bank, N:1 relationship with Trans_Owner~\
 Transaction(#id_transaction, id_transaction_acc_pays*,id_transaction_acc_receives*,title, amount, date, type,category) ~N:1 relationship with Transaction_acc for the people that pay and N:1 relationship for the people that receive~\
 Owent_transaction(#id_transaction*,title, id_user_student*,id_owent*) ~inherited from Transaction therefore the pk is also a fk, N:1 relationship with Student (so that we can see who is owed), N:1 relationship with Owent (btw Owent means Owing event in short terms and in it there can e many owent transactions)~\
 Owent(#id_owent,name)\
 Bank(#id_bank,name)\
 Card(#id_card,card_number,cvv,exp_date,id_user_student*,id_bank*,id_transaction_acc*) ~N:1 relationship with Student (a student can have multiple cards), N:1 relationship with Bank , 1:1 relationship with Transaction_acc~\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 Subscription_entity(#id_subscription_entity,name,link,id_transaction_acc*) ~1:1 relationship with Transaction_acc (Subscription_Entity is like Spotify, YT etc..)~\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 BucketItem(#id_bucket_item,name,price,frequency,stacked_money,status,amount,id_card*) ~N:1 relationship with Card (the card that reserves money for the bucketItem)~\
+Subscription_entity(#id_subscription_entity,name,link,id_transaction_acc*) ~1:1 relationship with Transaction_acc (Subscription_Entity is like Spotify, YT etc..)~\
+BucketItem(#id_bucket_item,name,price,frequency,stacked_money,status,amount,id_card*) ~N:1 relationship with Card (the card that reserves money for the bucketItem)~\
 Grant(#id_grant,name,amount,id_user_company*)  ~N:1 relationship with Company (every company can offer grants)~\
 VirtualCard(#id_virtual_card,limit,name) \
 Item(#id_item,price,name,description)\
 Service(#id_item*,datetime, id_user_student*) ~inherited from Item therefore pk==fk ,N:1 relationship with student (students offer services)~\
 Product(#id_item*) ~inherited from Item therefore pk==fk~\
 Notification(#id_notification,content,id_user*) ~N:1 relationship with User (many notifications to only one user)~\
+ReceiptParty(#id_receipt_party)\
 \
 \'85And after this point there are the tables that come from the M:N relationships between the entities\'85\
 \
@@ -46,25 +44,15 @@ friend_with(#id_user_student_1*,#id_user_student_2*)\
 student_applies_grant(#id_grant*,#id_user_student*)\
 student_participates_owent(#id_user_student*,#id_owent*)\
 student_buys_service(#id_user_student*,#id_item_service*)\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 student_buys_product(#id_user_student*,#id_item_product*,qr_code_image,date,is_used)\
+student_buys_product(#id_user_student*,#id_item_product*,qr_code_image,date,is_used)\
 card_operates_virtual_card(#id_card*,#id_virtual_card*)\
 card_subscribes_subscription_entity(#id_card*,#id_subscription_entity*,date_from,date_to,amount,status)\
 uni_has_document(#id_university*,#id_document*,price)\
 \
+\'85aaand the M:N:1 relationships\'85\
+student_creates_party_uses_transaction(#id_user_student*,#id_receipt_party*,#id_transaction_acc*) ~1(student):N(party):1(transaction_acc) relationship~\
+student_participates_party_uses_transaction((#id_user_student*,#id_receipt_party*,#id_transaction_acc*,owed_money,status) ~M(student):N(party):1(transaction_acc)~\
+\
 \
 Help me with the models in django.\
-Also I would like the id\'92s to be automatically  generated by django, and non-editable of course,\
-\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
-\cf0 \
-\
-\
-\
-\
- \
-  \
-\
-\
-\
-}
+Also I would like the id\'92s to be automatically  generated by django, and non-editable of course,}
