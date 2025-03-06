@@ -1,13 +1,13 @@
 from django.contrib import admin
 from .models import (
-    Bank, Owent, Document, VirtualCard, Notification, User, Company, University,
+    TransOwner, Bank, Owent, Document, VirtualCard, Notification, User, Company, University,
     TransactionAcc, Transaction, OwentTransaction, Card, SubscriptionEntity, BucketItem,
     Grant, Item, Service, Product, Student, FriendWith, StudentAppliesGrant, StudentParticipatesOwent,
     StudentBuysService, StudentBuysProduct, CardOperatesVirtualCard, CardSubscribesSubscriptionEntity,
-    UniHasDocument
+    UniHasDocument, ReceiptParty, StudentCreatesPartyUsesTransaction, StudentParticipatesPartyUsesTransaction
 )
 
-# Register each model with the admin site.
+admin.site.register(TransOwner)
 admin.site.register(Bank)
 admin.site.register(Owent)
 admin.site.register(Document)
@@ -35,3 +35,6 @@ admin.site.register(StudentBuysProduct)
 admin.site.register(CardOperatesVirtualCard)
 admin.site.register(CardSubscribesSubscriptionEntity)
 admin.site.register(UniHasDocument)
+admin.site.register(ReceiptParty)
+admin.site.register(StudentCreatesPartyUsesTransaction)
+admin.site.register(StudentParticipatesPartyUsesTransaction)

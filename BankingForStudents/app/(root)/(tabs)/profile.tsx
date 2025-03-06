@@ -58,7 +58,7 @@ const Profile = () => {
             {/* Account Information */}
             <View style={styles.accountInfo}>
                 <View style={styles.accountItem}>
-                    <Text style={styles.accountLabel}>Account Number</Text>
+                    <Text style={styles.accountLabel}>Default Card</Text>
                     <Text style={styles.accountValue}>{user.accountNumber}</Text>
                 </View>
                 <View style={styles.accountItem}>
@@ -132,6 +132,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 20,
         padding: 15,
+        paddingBottom: 0,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
         padding: 15,
         borderRadius: 10,
         alignItems: "center",
+        marginBottom: 100,
     },
     logoutButtonText: {
         color: "white",

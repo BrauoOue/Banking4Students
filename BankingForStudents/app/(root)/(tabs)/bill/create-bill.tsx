@@ -1,7 +1,8 @@
 import React, {useState} from "react";
 import {View, Text, TouchableOpacity, FlatList, Image, ScrollView} from "react-native";
 import {Picker} from "@react-native-picker/picker";
-import icons from "@/constants/icons"; // Ensure icons.js contains { coins: require("./path_to_coins_icon.png") }
+import icons from "@/constants/icons";
+import { useRouter } from "expo-router";
 
 const colors = ["bg-accent", "bg-red-400", "bg-green-400", "bg-yellow-400", "bg-orange-400"];
 
@@ -29,6 +30,7 @@ const billItems = [
 ];
 
 const BillSplitting = () => {
+    const router = useRouter()
     const [billType, setBillType] = useState(billDropdown[0]);
     const [method, setMethod] = useState(methodDropdown[0]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -52,7 +54,7 @@ const BillSplitting = () => {
             {/* Title */}
             <View className="flex-row items-center justify-center mb-4">
                 <View className={`w-6 h-6 rounded-full border border-black ${participants[0].color}`}/>
-                <Text className="text-lg font-bold ml-2 border-b pb-1">Bill Splitting System</Text>
+                <Text className="text-xl font-bold ml-2 border-b pb-1">Bill Splitting System</Text>
             </View>
 
             {/* Dropdowns */}
@@ -116,7 +118,7 @@ const BillSplitting = () => {
 
             {/* Pay Bill Button */}
             <TouchableOpacity
-                onPress={() => console.log("Paying bill...", selectedItems)}
+                onPress={() => router.replace("/bill/pay-bill")}
                 className="bg-primary p-4 rounded-full mt-4 mb-[13vh]"
             >
                 <Text className="text-white text-center">Pay Bill</Text>

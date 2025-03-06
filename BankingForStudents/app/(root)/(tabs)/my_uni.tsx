@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     picker: {
-        height: 40,
+        // height: 100,
         color: "black",
     },
     priceContainer: {
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         color: "#555",
     },
     payButton: {
-        backgroundColor: "#007BFF",
+        backgroundColor: "bg-primary",
         padding: 15,
         borderRadius: 5,
         alignItems: "center",
