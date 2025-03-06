@@ -1,0 +1,286 @@
+##########################################
+# 1) Base Models (no parents)
+##########################################
+
+# Bank
+{
+  "id": 1,
+  "name": "Example Bank"
+}
+
+# Owent
+{
+  "id": 1,
+  "name": "Example Owent"
+}
+
+# Document
+{
+  "id": 1,
+  "name": "Example Document"
+}
+
+# VirtualCard
+{
+  "id": 1,
+  "limit": "1000.00",
+  "name": "Virtual Card Example"
+}
+
+# Notification
+{
+  "id": 1,
+  "content": "Your transaction has been processed.",
+  "user": 1
+}
+
+
+##########################################
+# 2) User, Student, Company (Multi-table Inheritance)
+##########################################
+
+# User
+{
+  "id": 1,
+  "email": "user@example.com",
+  "password": "hashed_password"
+}
+
+# Company
+{
+  "id": 2,
+  "email": "company@example.com",
+  "password": "hashed_password",
+  "name": "Example Company"
+}
+
+# Student
+{
+  "id": 3,
+  "email": "student@example.com",
+  "password": "hashed_password",
+  "name": "John",
+  "surname": "Doe",
+  "ssn": "123-45-6789",
+  "points": 10,
+  "university": 1,
+  "card_default": 1,
+  "friends": [4, 5]
+}
+
+
+##########################################
+# 3) University
+##########################################
+
+# University
+{
+  "id": 1,
+  "name": "Example University",
+  "transaction_acc": 1
+}
+
+
+##########################################
+# 4) TransactionAcc
+##########################################
+
+# TransactionAcc
+{
+  "id": 1,
+  "number": "ACC123456",
+  "balance": "5000.00",
+  "bank": 1,
+  "user": 1
+}
+
+
+##########################################
+# 5) Transaction and OwentTransaction
+##########################################
+
+# Transaction
+{
+  "id": 1,
+  "transaction_acc_pays": 1,
+  "transaction_acc_receives": 2,
+  "amount": "150.00",
+  "date": "2025-03-06T12:00:00Z",
+  "type": "transfer",
+  "category": "payment",
+  "title": "Transaction Title"
+}
+
+# OwentTransaction
+{
+  "id": 2,
+  "transaction_acc_pays": 1,
+  "transaction_acc_receives": 2,
+  "amount": "200.00",
+  "date": "2025-03-06T12:30:00Z",
+  "type": "owent",
+  "category": "special",
+  "title": "Owent Transaction Title",
+  "owent_title": "Special Owent Transaction",
+  "student": 3,
+  "owent": 1
+}
+
+
+##########################################
+# 6) Card
+##########################################
+
+# Card
+{
+  "id": 1,
+  "card_number": "1234567890123456",
+  "cvv": "123",
+  "exp_date": "2026-12-31",
+  "student": 3,
+  "bank": 1,
+  "transaction_acc": 1
+}
+
+
+##########################################
+# 7) SubscriptionEntity
+##########################################
+
+# SubscriptionEntity
+{
+  "id": 1,
+  "name": "Subscription Example",
+  "link": "https://example.com/subscription",
+  "transaction_acc": 1
+}
+
+
+##########################################
+# 8) BucketItem
+##########################################
+
+# BucketItem
+{
+  "id": 1,
+  "name": "Bucket Item Example",
+  "price": "49.99",
+  "frequency": 1,
+  "stacked_money": "0.00",
+  "status": "active",
+  "amount": 1000,
+  "card": 1
+}
+
+
+##########################################
+# 9) Grant
+##########################################
+
+# Grant
+{
+  "id": 1,
+  "name": "Grant Example",
+  "amount": "5000.00",
+  "company": 2
+}
+
+
+##########################################
+# 10) Item, Service, and Product (Multi-table Inheritance)
+##########################################
+
+# Item
+{
+  "id": 1,
+  "price": 100,
+  "name": "Item Example",
+  "description": "This is an example item."
+}
+
+# Service
+{
+  "id": 2,
+  "price": 150,
+  "name": "Service Example",
+  "description": "This is an example service.",
+  "datetime": "2025-03-06T15:00:00Z",
+  "student": 3
+}
+
+# Product
+{
+  "id": 3,
+  "price": 200,
+  "name": "Product Example",
+  "description": "This is an example product."
+}
+
+
+##########################################
+# 11) Additional Relationships (Through Models)
+##########################################
+
+# FriendWith
+{
+  "id": 1,
+  "student1": 3,
+  "student2": 4
+}
+
+# StudentAppliesGrant
+{
+  "id": 1,
+  "student": 3,
+  "grant": 1
+}
+
+# StudentParticipatesOwent
+{
+  "id": 1,
+  "student": 3,
+  "owent": 1
+}
+
+# StudentBuysService
+{
+  "id": 1,
+  "student": 3,
+  "service": 2
+}
+
+# StudentBuysProduct
+{
+  "id": 1,
+  "student": 3,
+  "product": 3,
+  "qr_code_image": "path/to/qr_code.png",
+  "date": "2025-03-06T16:00:00Z",
+  "is_used": false
+}
+
+# CardOperatesVirtualCard
+{
+  "id": 1,
+  "card": 1,
+  "virtual_card": 1
+}
+
+# CardSubscribesSubscriptionEntity
+{
+  "id": 1,
+  "card": 1,
+  "subscription_entity": 1,
+  "date_from": "2025-03-01",
+  "date_to": "2025-03-31",
+  "amount": "9.99",
+  "status": "active"
+}
+
+# UniHasDocument
+{
+  "id": 1,
+  "university": 1,
+  "document": 1,
+  "price": "19.99"
+}

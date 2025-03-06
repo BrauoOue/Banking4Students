@@ -46,12 +46,13 @@ const TabsLayout = () => {
                 },
                 headerStyle: {
                     backgroundColor: "white",
-                    height: 40, // Adjust height as needed
+                    height: 65, // Adjusted height for iOS
                     borderBottomWidth: 1,
                     borderBottomColor: "#0061FF1A",
                 },
+                headerTitleAlign: "center", // Ensures left alignment on iOS
                 headerTitle: () => (
-                    <View className="flex-row items-center justify-between w-full px-4">
+                    <View className="flex-1 flex-row items-center justify-between w-[100%] px-2">
                         {/* Left Side - Logo */}
                         <Image source={images.logo} className="w-24 h-10" resizeMode="contain"/>
 
@@ -64,7 +65,7 @@ const TabsLayout = () => {
                         </View>
                     </View>
                 ),
-                headerTitleAlign: "center", // Optional: Center the header content
+
             }}
         >
             <Tabs.Screen

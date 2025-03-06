@@ -29,7 +29,7 @@ const Events = () => {
     const router = useRouter();
 
     return (
-        <View className="flex-1 bg-white px-4 pt-10">
+        <View className="flex-1 bg-white px-4 pt-5">
             {/* Header */}
             <View className="flex-row justify-between items-center mb-4">
                 <Text className="text-xl font-bold">Events</Text>
@@ -44,7 +44,7 @@ const Events = () => {
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                        className="bg-gray-100 rounded-lg p-4 mb-4"
+                        className="bg-accent/40 rounded-lg p-4 mb-4"
                         style={{ height: "40vh" }} // 40% height for each event card
                         onPress={() => router.push(`/events/${item.id}`)}
                     >

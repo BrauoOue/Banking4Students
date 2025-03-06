@@ -18,7 +18,7 @@ const NewEvent = () => {
         <View className="flex-1 bg-white px-4 pt-10">
             {/* Header */}
             <TouchableOpacity onPress={() => router.back()}>
-                <Text className="text-blue-500 mb-4">← Back</Text>
+                <Text className="text-accent mb-4">← Back</Text>
             </TouchableOpacity>
 
             <Text className="text-2xl font-bold mb-4">Create New Event</Text>
