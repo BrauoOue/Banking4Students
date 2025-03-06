@@ -1,2 +1,5 @@
 .idea
 .DS_Store
+
+BankingForStudents/node_modules/
+/node_modules/
