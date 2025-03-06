@@ -60,7 +60,7 @@ def get_user_transaction_accounts(request, user_id):
 
 
 @api_view(["POST"])
-def make_transaction(request):
+def send_money(request):
     from_transaction_number = request.data.get("from_transaction_number")
     to_user_email = request.data.get("to_user_email")
     amount = request.data.get("amount")
@@ -117,6 +117,90 @@ def make_transaction(request):
             transaction_acc_pays=from_transaction_acc,
             transaction_acc_receives=to_transaction_acc,
             title=f"Transfer to {to_student.email}",
+            amount=amount,
+            date=datetime.now(),
+            type="Transfer",
+            category="General",
+        )
+
+        return Response(
+            {"message": "Transaction successful", "transaction_id": new_transaction.id},
+            status=status.HTTP_201_CREATED,
+        )
+
+    except Student.DoesNotExist:
+        return Response(
+            {"error": "Sender student not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    except User.DoesNotExist:
+        return Response(
+            {"error": "Recipient user not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"An unexpected error occurred: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["POST"])
+def make_transaction(request):
+    from_transaction_number = request.data.get("from_transaction_number")
+    to_transaction_number = request.data.get("to_transaction_number")
+    amount = request.data.get("amount")
+
+    if not from_transaction_number or not to_transaction_number or not amount:
+        return Response(
+            {"error": "Missing required fields"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        amount = float(amount)
+        if amount <= 0:
+            return Response(
+                {"error": "Amount must be greater than zero"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+    except ValueError:
+        return Response(
+            {"error": "Invalid amount"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    try:
+        from_transaction_acc = TransactionAcc.objects.get(number=from_transaction_number)
+        to_transaction_acc = TransactionAcc.objects.get(number=to_transaction_number)
+
+        # Perform the transaction
+        from_transaction_acc.balance -= Decimal(amount)
+        to_transaction_acc.balance += Decimal(amount)
+
+        # Save the updated balances
+        from_transaction_acc.save()
+        to_transaction_acc.save()
+
+        receiver_name = None
+        student = Student.objects.get(id=to_transaction_acc.trans_owner)
+        company = Company.objects.get(id=to_transaction_acc.trans_owner)
+        university = University.objects.get(id=to_transaction_acc.trans_owner)
+
+        if student is not None:
+            receiver_name = student.email
+
+        if company is not None:
+            receiver_name = company.name
+
+        if university is not None:
+            receiver_name = university.name
+
+        # Create a new transaction record
+        new_transaction = Transaction.objects.create(
+            transaction_acc_pays=from_transaction_acc,
+            transaction_acc_receives=to_transaction_acc,
+            title=f"Transfer to {receiver_name}",
             amount=amount,
             date=datetime.now(),
             type="Transfer",
