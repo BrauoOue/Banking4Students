@@ -7,6 +7,26 @@ from .models import (
     UniHasDocument, ReceiptParty, StudentCreatesPartyUsesTransaction, StudentParticipatesPartyUsesTransaction
 )
 
+
+class TransactionAccAdmin(admin.ModelAdmin):
+    list_display = ("number", "balance", "bank", "get_owner_info")  # Custom column for owner info
+    search_fields = ("number", "trans_owner__user__email", "trans_owner__university__name")
+
+    def get_owner_info(self, obj):
+        """Fetch owner details dynamically depending on whether it's a User or University."""
+        owner = obj.trans_owner
+        if isinstance(owner, User):
+            return f"User: {owner.email} ({owner.id})"
+        elif isinstance(owner, University):
+            return f"University: {owner.name} ({owner.id})"
+        return "Unknown"
+
+    get_owner_info.short_description = "Owner Information"  # Column name in admin panel
+
+
+
+# Register in Django Admin
+admin.site.register(TransactionAcc)
 admin.site.register(TransOwner)
 admin.site.register(Bank)
 admin.site.register(Owent)
@@ -16,7 +36,7 @@ admin.site.register(Notification)
 admin.site.register(User)
 admin.site.register(Company)
 admin.site.register(University)
-admin.site.register(TransactionAcc)
+# admin.site.register(TransactionAcc)
 admin.site.register(Transaction)
 admin.site.register(OwentTransaction)
 admin.site.register(Card)

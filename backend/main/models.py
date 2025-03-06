@@ -60,7 +60,7 @@ class User(TransOwner):
     password = models.CharField(max_length=128)
 
     def __str__(self):
-        return self.email
+        return f"{self.id} {self.email}"
 
 
 class Company(User):
@@ -100,7 +100,7 @@ class TransactionAcc(models.Model):
     )
 
     def __str__(self):
-        return f"Acc {self.number} (Balance={self.balance})"
+        return f"Acc {self.number} (Balance={self.balance}) {self.trans_owner}"
 
 
 ###############################################################################
