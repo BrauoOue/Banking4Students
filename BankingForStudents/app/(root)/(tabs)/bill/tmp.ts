@@ -67,3 +67,9 @@ const billItems = {
     "warning": null
 }
 
+const virtualCardForm = {
+    name: "Roommates",
+    usersIds: [0, 1],
+    limit: 3000,
+}
+
