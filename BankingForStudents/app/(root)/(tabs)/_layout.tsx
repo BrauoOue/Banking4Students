@@ -138,15 +138,15 @@ const TabsLayout = () => {
                     ),
                 }}
             />
-            {/*<Tabs.Screen*/}
-            {/*    name="bill/pay-bill"*/}
-            {/*    options={{*/}
-            {/*        href: null,*/}
-            {/*        tabBarIcon: ({focused}) => (*/}
-            {/*            <TabIcon focused={focused} icon={icons.person} title="bill/pay-bill"/>*/}
-            {/*        ),*/}
-            {/*    }}*/}
-            {/*/>*/}
+            <Tabs.Screen
+                name="bill/pay-bill"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/pay-bill"/>
+                    ),
+                }}
+            />
             <Tabs.Screen
                 name="my_uni"
                 options={{
