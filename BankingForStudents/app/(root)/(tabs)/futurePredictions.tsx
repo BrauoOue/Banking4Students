@@ -5,17 +5,6 @@ import icons from "@/constants/icons";
 const FuturePredictions = () => {
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.logo}></View>
-        <View style={styles.balance}>
-          <Text style={styles.balanceText}>121</Text>
-          {/* Add your coin icon here */}
-          <Image
-            source={icons.coins} // Use the icon from the dictionary
-          />
-        </View>
-      </View>
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Title */}

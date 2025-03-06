@@ -174,6 +174,24 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="send"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="send"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="request"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="request"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };
