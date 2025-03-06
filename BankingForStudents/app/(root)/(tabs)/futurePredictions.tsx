@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   navItem: {
     width: 30,
     height: 30,
-    backgroundColor: "#ddd", // Gray placeholder
+
   },
   lstmExplanationText: {
     fontSize: 16,
