@@ -19,19 +19,6 @@ export default function RootLayout() {
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
-
-        // Fetch and log the IP address
-        const getIpAddress = async () => {
-            try {
-                const response = await fetch("https://api.ipify.org?format=json");
-                const data = await response.json();
-                console.log("Your IP Address is:", data.ip);
-            } catch (error) {
-                console.error("Failed to fetch IP address:", error);
-            }
-        };
-
-        getIpAddress();
     }, [fontsLoaded]);
 
     if (!fontsLoaded) {

@@ -9,4 +9,5 @@ urlpatterns = [
     path('', include(router.urls)),
     # Endpoint to list all Card - VirtualCard associations.
     path('card-virtualcards/', CardVirtualCardListAPIView.as_view(), name='card-virtualcards'),
+
 ]

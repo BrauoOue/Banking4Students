@@ -228,6 +228,15 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="bill/scan-bill"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/scan-bill"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };

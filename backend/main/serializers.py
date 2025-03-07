@@ -42,4 +42,4 @@ class TransactionAccSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionAcc
-        fields = ["id", "number", "balance", "bank", "bank_name", ]
+        fields = ["id", "number", "balance", "bank", "bank_name", "trans_owner"]
