@@ -28,7 +28,7 @@ const Profile = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {
