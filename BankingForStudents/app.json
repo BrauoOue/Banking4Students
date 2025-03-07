@@ -45,6 +45,13 @@
             "./assets/fonts/Rubik-SemiBold.ttf"
           ]
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow BankingForStudents to access your camera",
+          "recordAudioAndroid": true
+        }
       ]
     ],
     "experiments": {
