@@ -72,7 +72,7 @@ export default function ScanBillScreen() {
         Alert.alert("Success", "Receipt uploaded successfully!");
       } else {
         const text = await response.text();
-        // console.error("Non-JSON response:", text);
+        console.error("Non-JSON response:", text);
         Alert.alert(
           "Error",
           "Failed to upload receipt. Server returned non-JSON response."

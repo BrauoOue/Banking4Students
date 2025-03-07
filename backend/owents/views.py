@@ -23,10 +23,10 @@ from main.serializers import OwentTransactionSerializer
 import os
 from main.models import StudentParticipatesPartyUsesTransaction, Transaction
 
-from main.models import TransactionAcc, Student, ReceiptParty
+from main.models import *
 
 # Windows: Set the correct path to Tesseract
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 assistant = LLMAssistant(
     api_key=read_file_smart(full_path="../common/api_key.txt"),
@@ -113,7 +113,7 @@ def create_receipt_party(request):
             receipt_party = ReceiptParty.objects.create(
 
                 student=student,
-                transaction_acc=transaction_acc_number,
+                transaction_acc=transaction_acc,
                 scanned_receipt=None
 
             )
@@ -811,5 +811,5 @@ def pay_owent_transaction(request):
     except Exception as e:
         return Response(
             {"error": f"An unexpected error occurred: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
