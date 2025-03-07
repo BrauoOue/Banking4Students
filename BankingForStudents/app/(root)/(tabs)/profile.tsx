@@ -12,7 +12,7 @@ import icons from "@/constants/icons";
 import {useGlobalContext} from "@/lib/global-provider";
 
 const Profile = () => {
-    const {user, setUser} = useGlobalContext();
+    const {user, setUser, ipAddress} = useGlobalContext();
     const [cards, setCards] = useState([
         {
             "id": 2,
@@ -28,7 +28,7 @@ const Profile = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://${ipAddress}/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {

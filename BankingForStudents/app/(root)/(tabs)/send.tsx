@@ -4,7 +4,7 @@ import { Picker } from "@react-native-picker/picker";
 import {useGlobalContext} from "@/lib/global-provider";
 
 const SendMoney = () => {
-    const {user, setUser, isLogged} = useGlobalContext();
+    const {user, setUser, isLogged, ipAddress} = useGlobalContext();
     const [users, setUsers] = useState([]);
     const [selectedEmail, setSelectedEmail] = useState("");
     const [amount, setAmount] = useState("");
@@ -13,7 +13,7 @@ const SendMoney = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://192.168.0.194:8000/api/main/user-list/");
+                const response = await fetch(`http://${ipAddress}/api/main/user-list/`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch users");
                 }
@@ -40,7 +40,7 @@ const SendMoney = () => {
         };
 
         try {
-            const response = await fetch("http://192.168.0.194:8000/api/main/send-money/", {
+            const response = await fetch(`http://${ipAddress}/api/main/send-money/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -16,7 +16,7 @@ import {Ionicons} from "@expo/vector-icons";
 
 export default function Index() {
     const router = useRouter();
-    const {user, setUser, isLogged} = useGlobalContext();
+    const {user, setUser, isLogged, ipAddress} = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
@@ -31,7 +31,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/user-list/`
+                    `http://${ipAddress}/api/main/user-list/`
                 );
 
                 if (!response.ok) {
@@ -55,7 +55,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://${ipAddress}/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {
@@ -79,7 +79,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/transactions/${user?.email}/`
+                    `http://${ipAddress}/api/main/transactions/${user?.email}/`
                 );
 
                 if (!response.ok) {
