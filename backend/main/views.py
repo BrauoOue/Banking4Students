@@ -31,7 +31,6 @@ def get_user(request, id):
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
 def user_transactions(request, email):
     # Find the user by email
     user = get_object_or_404(User, email=email)
@@ -49,25 +48,6 @@ def user_transactions(request, email):
     # Serialize and return the transactions
     serializer = TransactionSerializer(transactions, many=True)
 
-    return Response(serializer.data)
-
-
-@api_view(["GET"])
-@permission_classes([AllowAny])
-def user_transactions(request, email):
-    # Find the user by email
-    user = get_object_or_404(User, email=email)
-
-    # Get all transaction accounts linked to this user
-    transaction_accounts = TransactionAcc.objects.filter(trans_owner=user.id)
-
-    # Get transactions where the user is involved (either sending or receiving)
-    transactions = Transaction.objects.filter(
-        transaction_acc_pays__in=transaction_accounts
-    )
-
-    # Serialize and return the transactions
-    serializer = TransactionSerializer(transactions, many=True)
     return Response(serializer.data)
 
 
