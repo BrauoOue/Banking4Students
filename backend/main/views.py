@@ -42,6 +42,28 @@ def user_transactions(request, email):
     # Get transactions where the user is involved (either sending or receiving)
     transactions = Transaction.objects.filter(
         transaction_acc_pays__in=transaction_accounts
+    ) | Transaction.objects.filter(
+        transaction_acc_receives__in=transaction_accounts
+    )
+
+    # Serialize and return the transactions
+    serializer = TransactionSerializer(transactions, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def user_transactions(request, email):
+    # Find the user by email
+    user = get_object_or_404(User, email=email)
+
+    # Get all transaction accounts linked to this user
+    transaction_accounts = TransactionAcc.objects.filter(trans_owner=user.id)
+
+    # Get transactions where the user is involved (either sending or receiving)
+    transactions = Transaction.objects.filter(
+        transaction_acc_pays__in=transaction_accounts
     )
 
     # Serialize and return the transactions
@@ -119,7 +141,7 @@ def send_money(request):
             title=f"Transfer to {to_student.email}",
             amount=amount,
             date=datetime.now(),
-            type="Transfer",
+            type="f",
             category="General",
         )
 
@@ -183,9 +205,10 @@ def make_transaction(request):
         to_transaction_acc.save()
 
         receiver_name = None
-        student = Student.objects.get(id=to_transaction_acc.trans_owner)
-        company = Company.objects.get(id=to_transaction_acc.trans_owner)
-        university = University.objects.get(id=to_transaction_acc.trans_owner)
+
+        student = Student.objects.filter(id=to_transaction_acc.trans_owner.id).first()
+        company = Company.objects.filter(id=to_transaction_acc.trans_owner.id).first()
+        university = University.objects.filter(id=to_transaction_acc.trans_owner.id).first()
 
         if student is not None:
             receiver_name = student.email
@@ -203,7 +226,7 @@ def make_transaction(request):
             title=f"Transfer to {receiver_name}",
             amount=amount,
             date=datetime.now(),
-            type="Transfer",
+            type="f",
             category="General",
         )
 

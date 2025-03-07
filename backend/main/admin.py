@@ -4,7 +4,7 @@ from .models import (
     TransactionAcc, Transaction, OwentTransaction, Card, SubscriptionEntity, BucketItem,
     Grant, Item, Service, Product, Student, FriendWith, StudentAppliesGrant, StudentParticipatesOwent,
     StudentBuysService, StudentBuysProduct, CardOperatesVirtualCard, CardSubscribesSubscriptionEntity,
-    UniHasDocument, ReceiptParty, StudentCreatesPartyUsesTransaction, StudentParticipatesPartyUsesTransaction
+    UniHasDocument, ReceiptParty, StudentParticipatesPartyUsesTransaction
 )
 
 
@@ -56,5 +56,5 @@ admin.site.register(CardOperatesVirtualCard)
 admin.site.register(CardSubscribesSubscriptionEntity)
 admin.site.register(UniHasDocument)
 admin.site.register(ReceiptParty)
-admin.site.register(StudentCreatesPartyUsesTransaction)
+# admin.site.register(StudentCreatesPartyUsesTransaction)
 admin.site.register(StudentParticipatesPartyUsesTransaction)

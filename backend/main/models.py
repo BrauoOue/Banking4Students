@@ -154,16 +154,16 @@ class Card(models.Model):
     card_number = models.CharField(max_length=16)
     cvv = models.CharField(max_length=4)
     exp_date = models.DateField()
-    student = models.ForeignKey(
-        "Student",
-        on_delete=models.CASCADE,
-        related_name="cards"
-    )
-    bank = models.ForeignKey(
-        Bank,
-        on_delete=models.CASCADE,
-        related_name="cards"
-    )
+    # student = models.ForeignKey(
+    #     "Student",
+    #     on_delete=models.CASCADE,
+    #     related_name="cards"
+    # )
+    # bank = models.ForeignKey(
+    #     Bank,
+    #     on_delete=models.CASCADE,
+    #     related_name="cards"
+    # )
     transaction_acc = models.OneToOneField(
         TransactionAcc,
         on_delete=models.CASCADE,
@@ -431,29 +431,41 @@ class UniHasDocument(models.Model):
 
 class ReceiptParty(models.Model):
     # As defined, only a primary key is needed.
-    def __str__(self):
-        return f"ReceiptParty {self.pk}"
-
-
-class StudentCreatesPartyUsesTransaction(models.Model):
+    qr = models.TextField()
+    scanned_receipt = models.JSONField(null=True)
     student = models.ForeignKey(
         Student,
         on_delete=models.CASCADE,
         related_name="created_parties"
     )
-    receipt_party = models.ForeignKey(
-        ReceiptParty,
-        on_delete=models.CASCADE,
-        related_name="creator"
-    )
     transaction_acc = models.ForeignKey(
         TransactionAcc,
         on_delete=models.CASCADE,
-        related_name="party_transactions"
+        related_name="party_transactions",
     )
-
     def __str__(self):
-        return f"{self.student} created party {self.receipt_party} with {self.transaction_acc}"
+        return f"ReceiptParty {self.pk}"
+
+
+# class StudentCreatesPartyUsesTransaction(models.Model):
+#     student = models.ForeignKey(
+#         Student,
+#         on_delete=models.CASCADE,
+#         related_name="created_parties"
+#     )
+#     receipt_party = models.ForeignKey(
+#         ReceiptParty,
+#         on_delete=models.CASCADE,
+#         related_name="creator"
+#     )
+#     transaction_acc = models.ForeignKey(
+#         TransactionAcc,
+#         on_delete=models.CASCADE,
+#         related_name="party_transactions"
+#     )
+#
+#     def __str__(self):
+#         return f"{self.student} created party {self.receipt_party} with {self.transaction_acc}"
 
 
 class StudentParticipatesPartyUsesTransaction(models.Model):

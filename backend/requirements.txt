@@ -7,4 +7,5 @@ pillow
 opencv-python
 numpy
 pytesseract
+qrcode
 
