@@ -8,7 +8,7 @@ urlpatterns = [
     path('join-party/<int:party_id>', views.join_receipt_party,
          name='join_receipt_party'),
 
-    path('accept-paying/', views.accept_paying,
+    path('ap/', views.accept_paying,
          name='join_receipt_party'),
 
     path('get-payment-status/', views.get_status,

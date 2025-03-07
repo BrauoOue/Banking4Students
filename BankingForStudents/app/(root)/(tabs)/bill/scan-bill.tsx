@@ -12,7 +12,7 @@ import { useRouter } from "expo-router";
 import { useGlobalContext } from "@/lib/global-provider";
 
 export default function ScanBillScreen() {
-  const { ipAddress } = useGlobalContext();
+  const { ipAddress, setItemcinja, qrCode } = useGlobalContext();
   const router = useRouter();
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
@@ -52,7 +52,7 @@ export default function ScanBillScreen() {
       name: "receipt.jpg",
       type: "image/jpeg",
     });
-    formData.append("party_id", "2");
+    formData.append("party_id", qrCode.id);
 
 
     try {
@@ -69,10 +69,14 @@ export default function ScanBillScreen() {
       if (contentType && contentType.includes("application/json")) {
         const result = await response.json();
         console.log("Receipt Analysis:", result);
+
+        setItemcinja(result)
+        router.replace("/bill/create-bill")
+
         Alert.alert("Success", "Receipt uploaded successfully!");
       } else {
         const text = await response.text();
-        console.error("Non-JSON response:", text);
+        // console.error("Non-JSON response:", text);
         Alert.alert(
           "Error",
           "Failed to upload receipt. Server returned non-JSON response."
@@ -82,7 +86,7 @@ export default function ScanBillScreen() {
       console.error("Upload failed:", error);
       Alert.alert("Error", "Failed to upload receipt.");
     }
-    router.replace("/bill/create-bill");
+    // router.replace("/");
   }
 
   return (

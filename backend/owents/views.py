@@ -21,11 +21,9 @@ from ai_modules.ai_functions import read_file_smart
 
 from main.serializers import OwentTransactionSerializer
 import os
+from main.models import StudentParticipatesPartyUsesTransaction, Transaction
 
-from main.models import StudentParticipatesPartyUsesTransaction, Transaction, User, Owent, StudentParticipatesOwent, \
-    OwentTransaction, Company, University
-
-from main.models import TransactionAcc, Student, ReceiptParty
+from main.models import *
 
 # Windows: Set the correct path to Tesseract
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
@@ -42,6 +40,44 @@ def extract_text_from_receipt(image):
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]  # Improve OCR accuracy
     text = pytesseract.image_to_string(gray, lang="bul")
     return text
+
+
+class ReciteSplitting(APIView):
+
+    def post(self, request, *args, **kwargs):
+        if 'image' not in request.FILES:
+            return Response({"error": "No image provided"}, status=400)
+
+        image_file = request.FILES['image']
+        party_id = request.data["party_id"]
+
+        image = Image.open(image_file).convert("RGB")
+        image_np = np.array(image)  # Convert to NumPy array
+        image_cv = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
+
+        ocr_text = extract_text_from_receipt(image_cv)
+
+        output = assistant.consult_once(f"The OCR text:{ocr_text}", structured_output="json")
+        # output = assistant.analyze(f"The Receipt:", image, structured_output="json")
+        output["warning"] = None
+
+        calculated_total = 0
+        for item in output["items"]:
+            calculated_total += item["amount"] * item["price"]
+
+        if output["total"] is None:
+            output[
+                "warning"] = "The scanned receipt image was of poor quality. The total could not be calculated correctly. Please check the receipt manually."
+            output["total"] = calculated_total
+
+        if output["total"] != calculated_total:
+            output["total"] = calculated_total
+
+        party = ReceiptParty.objects.get(id=party_id)
+        party.scanned_receipt = output
+        party.save()
+
+        return JsonResponse(output, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -89,7 +125,6 @@ def create_receipt_party(request):
             receipt_party.qr = qr
 
             receipt_party.save()
-
             return Response({
                 'id': receipt_party.id,
                 "qr": qr
@@ -100,43 +135,6 @@ def create_receipt_party(request):
             {'error': str(e)},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
-
-class ReciteSplitting(APIView):
-
-    def post(self, request, *args, **kwargs):
-        if 'image' not in request.FILES:
-            return Response({"error": "No image provided"}, status=400)
-
-        image_file = request.FILES['image']
-        party_id = request.data["party_id"]
-
-        image = Image.open(image_file).convert("RGB")
-        image_np = np.array(image)  # Convert to NumPy array
-        image_cv = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
-
-        ocr_text = extract_text_from_receipt(image_cv)
-
-        output = assistant.consult_once(f"The OCR text:{ocr_text}", structured_output="json")
-        output["warning"] = None
-
-        calculated_total = 0
-        for item in output["items"]:
-            calculated_total += item["amount"] * item["price"]
-
-        if output["total"] is None:
-            output[
-                "warning"] = "The scanned receipt image was of poor quality. The total could not be calculated correctly. Please check the receipt manually."
-            output["total"] = calculated_total
-
-        if output["total"] != calculated_total:
-            output["total"] = calculated_total
-
-        party = ReceiptParty.objects.get(id=party_id)
-        party.scanned_receipt = output
-        party.save()
-
-        return JsonResponse(output, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -344,7 +342,6 @@ def get_status(request):
             {"error": f"An unexpected error occurred: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
-
 
 @api_view(["POST"])
 def pay(request):
@@ -600,12 +597,11 @@ def make_owent_transaction(request):
             owent=owent
         ).exists()
 
-        if not payer_participant:
-            StudentParticipatesOwent.objects.create(student=payer_student,
-                                                    owent=owent)
-
-        if not owed_participant:
-            StudentParticipatesOwent.objects.create(student=owed_student, owent=owent)
+        if not payer_participant or not owed_participant:
+            return Response(
+                {"error": "Both students must be participants in the owent"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         # Check if payer has sufficient balance
         if payer_account.balance < amount:
@@ -659,14 +655,14 @@ def make_owent_transaction(request):
                 "from": payer_account.number,
                 "to": destination_account.number,
                 "amount": float(amount),
-                "type": "f"
+                "type": "finished"
             },
             "owent_transaction": {
                 "id": owent_transaction.id,
                 "from": owed_account.number,
                 "to": payer_account.number,
                 "amount": float(amount),
-                "type": "u"
+                "type": "unfinished"
             }
         }, status=status.HTTP_201_CREATED)
 
@@ -816,5 +812,4 @@ def pay_owent_transaction(request):
     except Exception as e:
         return Response(
             {"error": f"An unexpected error occurred: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR)

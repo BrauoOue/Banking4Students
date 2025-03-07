@@ -29,7 +29,7 @@ export default function ScanQRCodeScreen() {
       setScanned(true);
       setQrData(data);
       console.log(" Scanned QR Code: ", data)
-      router.replace("/bill/create-bill")
+      router.replace("/bill/join-bill/" + data.split("/")[6])
     }
   };
 
