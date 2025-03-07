@@ -28,7 +28,7 @@ from main.models import StudentParticipatesPartyUsesTransaction, Transaction, Us
 from main.models import TransactionAcc, Student, ReceiptParty
 
 # Windows: Set the correct path to Tesseract
-# pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 assistant = LLMAssistant(
     api_key=read_file_smart(full_path="../common/api_key.txt"),
@@ -42,6 +42,64 @@ def extract_text_from_receipt(image):
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]  # Improve OCR accuracy
     text = pytesseract.image_to_string(gray, lang="bul")
     return text
+
+
+@api_view(['POST'])
+def create_receipt_party(request):
+    try:
+        transaction_acc_number = request.data.get('transaction_acc_number')
+
+        if not transaction_acc_number:
+            return Response(
+                {'error': 'Transaction account ID is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Get the transaction account
+        try:
+            transaction_acc = TransactionAcc.objects.get(number=transaction_acc_number)
+        except TransactionAcc.DoesNotExist:
+            return Response(
+                {'error': 'Transaction account not found'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get the student based on the user
+        student = Student.objects.filter(id=transaction_acc.trans_owner.id).first()
+        if not student:
+            return Response(
+                {'error': 'Student profile not found for this user'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Create receipt party and the relationship with the student
+        with transaction.atomic():
+            # Create the receipt party
+            receipt_party = ReceiptParty.objects.create(
+
+                student=student,
+                transaction_acc=transaction_acc,
+                scanned_receipt=None
+
+            )
+
+            url = f"http://127.0.0.1:8000/api/owent/join-party/{receipt_party.id}"
+            qr = generate_qr_code(url)
+
+            receipt_party.qr = qr
+
+            receipt_party.save()
+
+            return Response({
+                'id': receipt_party.id,
+                "qr": qr
+            }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response(
+            {'error': str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 
 class ReciteSplitting(APIView):
@@ -79,64 +137,6 @@ class ReciteSplitting(APIView):
         party.save()
 
         return JsonResponse(output, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def create_receipt_party(request):
-    try:
-        transaction_acc_number = request.data.get('transaction_acc_number')
-
-        if not transaction_acc_number:
-            return Response(
-                {'error': 'Transaction account ID is required'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        # Get the transaction account
-        try:
-            transaction_acc = TransactionAcc.objects.get(number=transaction_acc_number)
-        except TransactionAcc.DoesNotExist:
-            return Response(
-                {'error': 'Transaction account not found'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Get the student based on the user
-        student = Student.objects.filter(id=transaction_acc.trans_owner.id).first()
-        if not student:
-            return Response(
-                {'error': 'Student profile not found for this user'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Create receipt party and the relationship with the student
-        with transaction.atomic():
-            # Create the receipt party
-            receipt_party = ReceiptParty.objects.create(
-
-                student=student,
-                transaction_acc=transaction_acc_number,
-                scanned_receipt=None
-
-            )
-
-            url = f"http://127.0.0.1:8000/api/owent/join-party/{receipt_party.id}"
-            qr = generate_qr_code(url)
-
-            receipt_party.qr = qr
-
-            receipt_party.save()
-
-            return Response({
-                'id': receipt_party.id,
-                "qr": qr
-            }, status=status.HTTP_201_CREATED)
-
-    except Exception as e:
-        return Response(
-            {'error': str(e)},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
 
 
 @api_view(['POST'])
@@ -346,6 +346,7 @@ def get_status(request):
         )
 
 
+@api_view(["POST"])
 def pay(request):
     party_id = request.data["party_id"]
     destination_acc_number = request.data.get("pay_to_acc_number")
@@ -599,11 +600,12 @@ def make_owent_transaction(request):
             owent=owent
         ).exists()
 
-        if not payer_participant or not owed_participant:
-            return Response(
-                {"error": "Both students must be participants in the owent"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        if not payer_participant:
+            StudentParticipatesOwent.objects.create(student=payer_student,
+                                                    owent=owent)
+
+        if not owed_participant:
+            StudentParticipatesOwent.objects.create(student=owed_student, owent=owent)
 
         # Check if payer has sufficient balance
         if payer_account.balance < amount:
@@ -657,14 +659,14 @@ def make_owent_transaction(request):
                 "from": payer_account.number,
                 "to": destination_account.number,
                 "amount": float(amount),
-                "type": "finished"
+                "type": "f"
             },
             "owent_transaction": {
                 "id": owent_transaction.id,
                 "from": owed_account.number,
                 "to": payer_account.number,
                 "amount": float(amount),
-                "type": "unfinished"
+                "type": "u"
             }
         }, status=status.HTTP_201_CREATED)
 
