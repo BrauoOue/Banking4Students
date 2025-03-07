@@ -4,7 +4,7 @@ import {Picker} from "@react-native-picker/picker";
 import {useGlobalContext} from "@/lib/global-provider";
 
 const Transaction = () => {
-    const {user, isLogged} = useGlobalContext();
+    const {user, isLogged, ipAddress} = useGlobalContext();
     const [users, setUsers] = useState([]);
     const [creditCard, setCreditCard] = useState({});
     const [otherCreditCard, setOtherCreditCard] = useState([]);
@@ -15,7 +15,7 @@ const Transaction = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://192.168.0.194:8000/api/main/user-list/");
+                const response = await fetch(`http://${ipAddress}/api/main/user-list/`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch users");
                 }
@@ -36,7 +36,7 @@ const Transaction = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://${ipAddress}/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {
@@ -60,7 +60,7 @@ const Transaction = () => {
         const fetchData = async (u) => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/transaction-accounts/${u?.id}/`
+                    `http://${ipAddress}/api/main/transaction-accounts/${u?.id}/`
                 );
 
                 if (!response.ok) {
@@ -96,7 +96,7 @@ const Transaction = () => {
         };
 
         try {
-            const response = await fetch("http://192.168.0.194:8000/api/main/transaction/", {
+            const response = await fetch(`http://${ipAddress}/api/main/transaction/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

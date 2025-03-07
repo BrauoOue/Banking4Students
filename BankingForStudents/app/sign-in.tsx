@@ -9,7 +9,7 @@ import {useGlobalContext} from "@/lib/global-provider";
 
 const SignIn = () => {
     const router = useRouter();
-    const {isLogged, setIsLogged, setUser} = useGlobalContext();
+    const {isLogged, setIsLogged, setUser, ipAddress} = useGlobalContext();
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState(2);
 
@@ -17,7 +17,7 @@ const SignIn = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://192.168.0.194:8000/api/main/user-list/`
+                    `http://${ipAddress}/api/main/user-list/`
                 );
 
                 if (!response.ok) {
