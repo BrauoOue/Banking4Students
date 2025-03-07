@@ -138,7 +138,7 @@ export default function Index() {
         }
     }, []);
 
-    const requests = [
+    const [requests, setRequests] = useState([
         {
             id: "1",
             from: "Nikola J.",
@@ -160,7 +160,7 @@ export default function Index() {
             date: "Jan 1",
             reason: "Public Room",
         },
-    ];
+    ]);
 
     const partnership = {
         id: "1",
@@ -171,6 +171,16 @@ export default function Index() {
 
     function transformDate(date: string) {
         return date.split("T")[0]
+    }
+
+    function handleRequestDeny(item) {
+        setRequests(requests.filter((r) => r.id !== item.id))
+    }
+
+    function handleRequestSuccess(item) {
+        let tmp = parseFloat(creditCards[0].balance) - parseFloat(item.amount.split("$")[1])
+        creditCards[0].balance = "" + tmp
+        setRequests(requests.filter((r) => r.id !== item.id))
     }
 
     return (
@@ -274,7 +284,7 @@ export default function Index() {
                         <Text className="text-sm text-gray-600">{item.reason}</Text>
                         <Text className="text-red-500 font-bold mt-2">{item.amount}</Text>
                         <View className="flex-row justify-between mt-2">
-                            <TouchableOpacity className="bg-green-500 px-3 py-1 rounded-md">
+                            <TouchableOpacity onPress={() => handleRequestSuccess(item)} className="bg-green-500 px-3 py-1 rounded-md">
                                 <Image
                                     source={icons.accept}
                                     className="w-5 h-5"
@@ -282,7 +292,7 @@ export default function Index() {
                                 />
                                 {/*<Text className="text-white font-bold">Accept</Text>*/}
                             </TouchableOpacity>
-                            <TouchableOpacity className="bg-red-500 px-3 py-1 rounded-md">
+                            <TouchableOpacity onPress={() => handleRequestDeny(item)} className="bg-red-500 px-3 py-1 rounded-md">
                                 <Image
                                     source={icons.deny}
                                     className="w-5 h-5"

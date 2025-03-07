@@ -1,13 +1,40 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {Modal, View, Text, TouchableOpacity} from "react-native";
 import {useRouter} from "expo-router";
 import {Picker} from "@react-native-picker/picker";
+import {useGlobalContext} from "@/lib/global-provider";
 
 const Splitting = () => {
+    const {user, ipAddress} = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false); // Track modal visibility
     const [selectedCard, setSelectedCard] = useState(null); // Track selected card
-    const [modalType, setModalType] = useState(""); // Track whether it's Create or Join Bill
+    const [modalType, setModalType] = useState("");
     const router = useRouter();
+    const [cards, setCards] = useState([]);
+    const [qrCode, setQrCode] = useState("");
+
+    useEffect(() => {
+        // Fetch data from the API
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://${ipAddress}/api/main/transaction-accounts/${user?.id}/`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json(); // Parse the response as JSON
+                setCards(data); // Update the state with the fetched data
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                // Handle errors (e.g., show a message to the user)
+            }
+        };
+
+        fetchData(); // Call the fetch function
+    }, []);
 
     const creditCards = [
         {id: "1", bank: "Visa"},
@@ -17,25 +44,60 @@ const Splitting = () => {
 
     const CreateBill = () => {
         setModalType("create"); // Set modal type to "create" when Create Bill is clicked
-        setModalVisible(true);  // Show modal
+        setModalVisible(true); // Show modal
     };
 
     const JoinBill = () => {
         setModalType("join"); // Set modal type to "join" when Join Bill is clicked
-        setModalVisible(true);  // Show modal
+        setModalVisible(true); // Show modal
     };
 
     const MyEvents = () => {
-        console.log("Events")
+        console.log("Events");
         router.replace("/events/myevents");
     };
 
-    const handleScanAction = () => {
+    const handleScanAction = async () => {
         if (modalType === "create") {
             console.log("Scanning Bill..."); // Handle scanning for Create Bill
+
+            try {
+                const url = `http://${ipAddress}/api/owents/make-party/`;
+                const data = {
+                    transaction_acc_number: cards[0].number,
+                };
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const contentType = response.headers.get("Content-Type");
+                if (contentType && contentType.includes("application/json")) {
+                    const result = await response.json();
+                    setQrCode(result["qr"])
+                    console.log("Party created:", result["qr"]);
+                } else {
+                    const text = await response.text();
+                    console.error("Non-JSON response:", text);
+                }
+            } catch (error) {
+                console.error("Party creation failed:", error);
+            }
+
             router.replace("/bill/scan-bill");
         } else if (modalType === "join") {
             console.log("Scanning QR Code..."); // Handle scanning for Join Bill
+
+            router.replace("/bill/scan-qr");
+            // console.log(qrCode)
+            // router.replace({
+            //     pathname: "/bill/scan-qr",
+            //     params: {qr: qrCode},
+            // });
         }
         setModalVisible(false); // Close modal after scanning
         // router.replace("/bill/create-bill");
@@ -48,8 +110,9 @@ const Splitting = () => {
 
     return (
         <View className="flex-1 items-center justify-between bg-white p-5">
-            <Text className="text-2xl font-bold text-text my-4 border-b border-gray-300 py-3">Bill Splitting
-                System</Text>
+            <Text className="text-2xl font-bold text-text my-4 border-b border-gray-300 py-3">
+                Bill Splitting System
+            </Text>
 
             {/* Create Bill and Join Bill Buttons */}
             <View className="flex-1 items-center justify-center">
@@ -76,8 +139,9 @@ const Splitting = () => {
             >
                 <View className="flex-1 justify-center items-center bg-black/40">
                     <View className="bg-white p-5 rounded-lg shadow-lg w-80">
-                        <Text
-                            className="text-xl font-bold mb-4">{modalType === "create" ? "Create Bill" : "Join Bill"}</Text>
+                        <Text className="text-xl font-bold mb-4">
+                            {modalType === "create" ? "Create Bill" : "Join Bill"}
+                        </Text>
 
                         {/* Dropdown for selecting card (only visible for Create Bill) */}
                         <Text className="text-lg">Choose Card:</Text>

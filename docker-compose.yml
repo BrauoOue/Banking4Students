@@ -13,20 +13,20 @@ services:
     networks:
       - app-network
 
-  react-native:
-    build: ./BankingForStudents
-    container_name: frontend
-    ports:
-      - "8081:8081"
-      - "19000:19000"
-      - "19001:19001"
-      - "19002:19002"
-    volumes:
-      - ./BankingForStudents:/app
-    depends_on:
-      - backend
-    networks:
-      - app-network
+  # react-native:
+  #   build: ./BankingForStudents
+  #   container_name: frontend
+  #   ports:
+  #     - "8081:8081"
+  #     - "19000:19000"
+  #     - "19001:19001"
+  #     - "19002:19002"
+  #   volumes:
+  #     - ./BankingForStudents:/app
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
 
   # db:
   #     image: postgres:15-alpine
