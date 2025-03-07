@@ -21,9 +21,7 @@ from ai_modules.ai_functions import read_file_smart
 
 from main.serializers import OwentTransactionSerializer
 import os
-
-from main.models import StudentParticipatesPartyUsesTransaction, Transaction, User, Owent, StudentParticipatesOwent, \
-    OwentTransaction, Company, University
+from main.models import StudentParticipatesPartyUsesTransaction, Transaction
 
 from main.models import TransactionAcc, Student, ReceiptParty
 
@@ -126,7 +124,6 @@ def create_receipt_party(request):
             receipt_party.qr = qr
 
             receipt_party.save()
-
             return Response({
                 'id': receipt_party.id,
                 "qr": qr
@@ -815,4 +812,4 @@ def pay_owent_transaction(request):
         return Response(
             {"error": f"An unexpected error occurred: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
-        )
+        
