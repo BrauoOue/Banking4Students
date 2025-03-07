@@ -36,7 +36,7 @@ const SignIn = () => {
     }, []);
 
     const handleLogin = async () => {
-        const selectedUser = users.find((user) => user.id === selectedUserId );
+        const selectedUser = users.find((user) => user.id === selectedUserId);
         if (!selectedUser) {
             Alert.alert("Error", "Please select a user before logging in.");
             return;
@@ -49,7 +49,7 @@ const SignIn = () => {
 
     return (
         <SafeAreaView className="bg-white h-full">
-            <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
+            <ScrollView contentContainerStyle={{flexGrow: 1,}}>
                 <View className="flex justify-center items-center mt-[12vh]">
                     <Image source={images.logo} className="w-2/3 h-10/23" resizeMode="contain"/>
                 </View>

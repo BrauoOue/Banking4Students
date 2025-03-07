@@ -38,7 +38,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'corsheaders',
-    
+
     'main',
     'cashstuffing',
     'claimhub',
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,7 +57,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -127,10 +127,20 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-CORS_ALLOW_ALL_ORIGINS = True # TODO remove this in production
 
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_ALL_ORIGINS = True  # TODO remove this in production
+CORS_ORIGIN_WHITELIST = [
+    'http://192.168.1.69:19000',
+]
+CORS_ORIGIN_ALLOW = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:8080",
     "http://localhost:8081",
+    "http://192.168.0.194:8081",
+    "https://192.168.0.194:8081",
+    "exp://192.168.0.194:8081",
+    "exp://192.168.0.194:19000",
 ]
