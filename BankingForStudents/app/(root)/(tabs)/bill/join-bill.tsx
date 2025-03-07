@@ -118,7 +118,7 @@ const BillSplitting = () => {
 
             {/* Pay Bill Button */}
             <TouchableOpacity
-                onPress={() => router.replace("/bill/pay-bill")}
+                onPress={() => router.replace("/")}
                 className="bg-primary p-4 rounded-full mt-4 mb-[13vh]"
             >
                 <Text className="text-white text-center">Accept Payment</Text>
