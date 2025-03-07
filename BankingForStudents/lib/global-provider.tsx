@@ -6,6 +6,10 @@ interface GlobalContextType {
   user: User | null;
   setUser: (user: User | null) => void;
   ipAddress: string;
+  qrCode: object;
+  setQrCode: (value: object) => void;
+  itemcinja: object;
+  setItemcinja: (value: object) => void;
 }
 
 interface User {
@@ -27,10 +31,13 @@ interface GlobalProviderProps {
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState<User | null>(null); // Added state
-  const ipAddress = "192.168.0.194:8000"
+  const [qrCode, setQrCode] = useState({}); // Added state
+  const [itemcinja, setItemcinja] = useState({"items": [{"amount": 1, "itemName": "ЧАЈ", "price": 185}, {"amount": 5, "itemName": "ХАМБУРГЕР", "price": 178.08}, {"amount": 1, "itemName": "ГРОНЕТ ЕЛО", "price": 715.08}], "total": 2690.88, "warning": null}); // Added state
+  const ipAddress = "192.168.0.100:8000"
+
 
   return (
-    <GlobalContext.Provider value={{ isLogged, setIsLogged, user, setUser, ipAddress }}>
+    <GlobalContext.Provider value={{ isLogged, setIsLogged, user, setUser, ipAddress, qrCode, setQrCode, itemcinja, setItemcinja }}>
       {children}
     </GlobalContext.Provider>
   );

@@ -58,6 +58,7 @@ class ReciteSplitting(APIView):
         ocr_text = extract_text_from_receipt(image_cv)
 
         output = assistant.consult_once(f"The OCR text:{ocr_text}", structured_output="json")
+        # output = assistant.analyze(f"The Receipt:", image, structured_output="json")
         output["warning"] = None
 
         calculated_total = 0
@@ -342,7 +343,7 @@ def get_status(request):
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
 
-
+@api_view(["POST"])
 def pay(request):
     party_id = request.data["party_id"]
     destination_acc_number = request.data.get("pay_to_acc_number")
@@ -812,4 +813,3 @@ def pay_owent_transaction(request):
         return Response(
             {"error": f"An unexpected error occurred: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        

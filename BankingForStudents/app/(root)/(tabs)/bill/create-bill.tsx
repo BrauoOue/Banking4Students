@@ -1,9 +1,10 @@
-import React, {useState} from "react";
-import {View, Text, TouchableOpacity, FlatList, Image, ScrollView} from "react-native";
+import React, {useEffect, useState} from "react";
+import {View, Text, TouchableOpacity, FlatList, Image, ScrollView, StyleSheet, Alert} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import icons from "@/constants/icons";
-import { useRouter } from "expo-router";
-import {useLocalSearchParams } from "expo-router/build/hooks";
+import {useRouter} from "expo-router";
+import {useLocalSearchParams} from "expo-router/build/hooks";
+import {useGlobalContext} from "@/lib/global-provider";
 
 const colors = ["bg-accent", "bg-red-400", "bg-green-400", "bg-yellow-400", "bg-orange-400"];
 
@@ -13,30 +14,59 @@ const methodDropdown = ["By items", "Divide bill equally"];
 const participants = [
     {id: "0", name: "Me", color: colors[0]},
     {id: "1", name: "NJ", color: colors[1]},
-    {id: "2", name: "VK", color: colors[2]},
-    {id: "3", name: "AS", color: colors[3]}
+    // {id: "2", name: "VK", color: colors[2]},
+    // {id: "3", name: "AS", color: colors[3]}
 ];
 
-const billItems = [
-    {itemName: "Oysters Dozen", amount: 1, price: 2.61},
-    {itemName: "Clam Chowder", amount: 1, price: 5.50},
-    {itemName: "Grilled Lobster", amount: 1, price: 12.49},
-    {itemName: "Crab Cakes", amount: 2, price: 8.75},
-    {itemName: "Fish Tacos", amount: 3, price: 6.25},
-    {itemName: "Shrimp Scampi", amount: 1, price: 11.50},
-    {itemName: "Fried Calamari", amount: 1, price: 20.00},
-    {itemName: "Salmon Fillet", amount: 2, price: 13.45},
-    {itemName: "Clam Bake", amount: 1, price: 15.49},
-    {itemName: "Steamed Mussels", amount: 1, price: 7.25}
-];
+// const billItems = [
+//     {itemName: "Oysters Dozen", amount: 1, price: 2.61},
+//     {itemName: "Clam Chowder", amount: 1, price: 5.50},
+//     {itemName: "Grilled Lobster", amount: 1, price: 12.49},
+//     {itemName: "Crab Cakes", amount: 2, price: 8.75},
+//     {itemName: "Fish Tacos", amount: 3, price: 6.25},
+//     {itemName: "Shrimp Scampi", amount: 1, price: 11.50},
+//     {itemName: "Fried Calamari", amount: 1, price: 20.00},
+//     {itemName: "Salmon Fillet", amount: 2, price: 13.45},
+//     {itemName: "Clam Bake", amount: 1, price: 15.49},
+//     {itemName: "Steamed Mussels", amount: 1, price: 7.25}
+// ];
 
 const BillSplitting = () => {
-    // const params = useLocalSearchParams ();
-    // const messager = params.qr;
     const router = useRouter();
+    const {itemcinja, qrCode, ipAddress} = useGlobalContext();
     const [billType, setBillType] = useState(billDropdown[0]);
     const [method, setMethod] = useState(methodDropdown[0]);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [status, setStatus] = useState(null);
+
+    // Polling function to check payment status
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const data = {
+                party_id: qrCode?.id, // Party ID from the URL params
+                student_id: "3", // You can replace this with user.id if dynamic
+            };
+
+            fetch(`http://${ipAddress}/api/owents/get-payment-status/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "accepted") {
+                        setStatus("accepted");
+                    } else {
+                        setStatus(null);
+                    }
+                })
+                .catch((error) => console.error("Error fetching payment status:", error));
+        }, 3000); // Fetch every 3 seconds
+
+        return () => clearInterval(intervalId); // Clean up the interval on component unmount
+    }, [qrCode?.id, ipAddress]);
 
     const toggleItemSelection = (itemName) => {
         setSelectedItems((prev) =>
@@ -46,11 +76,47 @@ const BillSplitting = () => {
         );
     };
 
-    const totalAmount = billItems.reduce((sum, item) => sum + item.amount * item.price, 0).toFixed(2);
+    const totalAmount = itemcinja.items.reduce((sum, item) => sum + item.amount * item.price, 0).toFixed(2);
     const myPart = (method === "By items"
-            ? billItems.filter((item) => selectedItems.includes(item.itemName)).reduce((sum, item) => sum + item.amount * item.price, 0)
+            ? itemcinja.items.filter((item) => selectedItems.includes(item.itemName)).reduce((sum, item) => sum + item.amount * item.price, 0)
             : totalAmount / participants.length
     ).toFixed(2);
+
+    const handlePayBill = async () => {
+        const data = {
+            party_id: qrCode?.id, // Party ID from the URL params
+            pay_to_acc_number: "30000000000000", // Example account number
+            owner_part: myPart,
+        };
+
+        try {
+            const response = await fetch(`http://${ipAddress}/api/owents/pay-bill/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                // Show success message
+                Alert.alert("Ready to Pay?", result.message, [
+                    {
+                        text: "OK",
+                        onPress: () => router.replace("/bill/pay-bill"), // Navigate to home page
+                    },
+                ]);
+            } else {
+                // Show error message
+                Alert.alert("Payment Failed", result.message || "There was an error with the payment.");
+            }
+        } catch (error) {
+            console.error("Error making payment:", error);
+            Alert.alert("Payment Failed", "There was an error with the payment.");
+        }
+    };
+
 
     return (
         <ScrollView className="p-4 bg-white">
@@ -99,17 +165,22 @@ const BillSplitting = () => {
             {/* Bill Items */}
             {method === "By items" && (
                 <FlatList
-                    data={billItems}
+                    data={itemcinja.items}
                     keyExtractor={(item) => item.itemName}
-                    renderItem={({item}) => (
-                        <TouchableOpacity
-                            onPress={() => toggleItemSelection(item.itemName)}
-                            className={`flex-row justify-between p-2 border-b ${selectedItems.includes(item.itemName) ? colors[0] : ""}`}
-                        >
-                            <Text>{item.amount} {item.itemName}</Text>
-                            <Text>€{(item.amount * item.price).toFixed(2)}</Text>
-                        </TouchableOpacity>
-                    )}
+                    renderItem={({item, index}) => {
+                        // Apply conditional background color for the first row if status is accepted
+                        const rowBackgroundColor = (status === "accepted" && index === 0) ? "bg-red-400" : "";
+
+                        return (
+                            <TouchableOpacity
+                                onPress={() => toggleItemSelection(item.itemName)}
+                                className={`flex-row justify-between p-2 border-b ${rowBackgroundColor}`}
+                            >
+                                <Text>{item.amount} {item.itemName}</Text>
+                                <Text>{(item.amount * item.price).toFixed(2)}</Text>
+                            </TouchableOpacity>
+                        );
+                    }}
                 />
             )}
 
@@ -121,18 +192,37 @@ const BillSplitting = () => {
 
             {/* Pay Bill Button */}
             <TouchableOpacity
-                onPress={() => router.replace("/bill/pay-bill")}
+                onPress={handlePayBill}
                 className="bg-primary p-4 rounded-full mt-4 mb-[13vh]"
             >
                 <Text className="text-white text-center">Pay Bill</Text>
             </TouchableOpacity>
 
-            {/*<Image className="w-10 h-10"*/}
-            {/*    source={messager}>*/}
-            {/*</Image>*/}
+            <View style={styles.imageContainer}>
+                <Image source={{uri: qrCode.qr}} style={styles.image}/>
+            </View>
 
         </ScrollView>
     );
 };
 
 export default BillSplitting;
+
+const styles = StyleSheet.create({
+    imageContainer: {
+        width: 300,
+        height: 300,
+        marginBottom: 120,
+        marginLeft: 30,
+        borderRadius: 10,
+        overflow: "hidden",
+        borderWidth: 1,
+        borderColor: "#ddd",
+        backgroundColor: "#fff",
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "cover",
+    },
+});

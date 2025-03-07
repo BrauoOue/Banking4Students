@@ -5,13 +5,21 @@ import {Picker} from "@react-native-picker/picker";
 import {useGlobalContext} from "@/lib/global-provider";
 
 const Splitting = () => {
-    const {user, ipAddress} = useGlobalContext();
+    const {user, ipAddress, setQrCode} = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false); // Track modal visibility
     const [selectedCard, setSelectedCard] = useState(null); // Track selected card
     const [modalType, setModalType] = useState("");
     const router = useRouter();
-    const [cards, setCards] = useState([]);
-    const [qrCode, setQrCode] = useState("");
+    const [cards, setCards] = useState([
+        {
+            "id": 3,
+            "number": "20000000000001",
+            "balance": "5510.00",
+            "bank": 2,
+            "bank_name": "NLB",
+            "trans_owner": 3
+        }
+    ]);
 
     useEffect(() => {
         // Fetch data from the API
@@ -34,7 +42,7 @@ const Splitting = () => {
         };
 
         fetchData(); // Call the fetch function
-    }, []);
+    }, [user]);
 
     const creditCards = [
         {id: "1", bank: "Visa"},
@@ -78,11 +86,11 @@ const Splitting = () => {
                 const contentType = response.headers.get("Content-Type");
                 if (contentType && contentType.includes("application/json")) {
                     const result = await response.json();
-                    setQrCode(result["qr"])
+                    setQrCode(result)
                     console.log("Party created:", result["qr"]);
                 } else {
                     const text = await response.text();
-                    console.error("Non-JSON response:", text);
+                    // console.error("Non-JSON response:", text.split("\n")[0]);
                 }
             } catch (error) {
                 console.error("Party creation failed:", error);

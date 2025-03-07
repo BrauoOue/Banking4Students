@@ -139,6 +139,15 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen
+                name="bill/join-bill/[id]"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/join-bill/[id]"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="bill/pay-bill"
                 options={{
                     href: null,
