@@ -31,7 +31,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/user-list/`
+                    `http://192.168.0.194:8000/api/main/user-list/`
                 );
 
                 if (!response.ok) {
@@ -55,7 +55,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {
@@ -79,7 +79,7 @@ export default function Index() {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/transactions/${user?.email}/`
+                    `http://192.168.0.194:8000/api/main/transactions/${user?.email}/`
                 );
 
                 if (!response.ok) {

@@ -13,7 +13,7 @@ const SendMoney = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/main/user-list/");
+                const response = await fetch("http://192.168.0.194:8000/api/main/user-list/");
                 if (!response.ok) {
                     throw new Error("Failed to fetch users");
                 }
@@ -40,7 +40,7 @@ const SendMoney = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:8000/api/main/send-money/", {
+            const response = await fetch("http://192.168.0.194:8000/api/main/send-money/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

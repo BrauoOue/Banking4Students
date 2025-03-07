@@ -15,7 +15,7 @@ const Transaction = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:8000/api/main/user-list/");
+                const response = await fetch("http://192.168.0.194:8000/api/main/user-list/");
                 if (!response.ok) {
                     throw new Error("Failed to fetch users");
                 }
@@ -36,7 +36,7 @@ const Transaction = () => {
         const fetchData = async () => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/transaction-accounts/${user?.id}/`
+                    `http://192.168.0.194:8000/api/main/transaction-accounts/${user?.id}/`
                 );
 
                 if (!response.ok) {
@@ -60,7 +60,7 @@ const Transaction = () => {
         const fetchData = async (u) => {
             try {
                 const response = await fetch(
-                    `http://localhost:8000/api/main/transaction-accounts/${u?.id}/`
+                    `http://192.168.0.194:8000/api/main/transaction-accounts/${u?.id}/`
                 );
 
                 if (!response.ok) {
@@ -96,7 +96,7 @@ const Transaction = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:8000/api/main/transaction/", {
+            const response = await fetch("http://192.168.0.194:8000/api/main/transaction/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
