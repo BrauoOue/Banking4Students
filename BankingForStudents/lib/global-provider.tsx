@@ -4,7 +4,8 @@ interface GlobalContextType {
   isLogged: boolean;
   setIsLogged: (value: boolean) => void;
   user: User | null;
-  setUser: (user: User | null) => void; // Added setter
+  setUser: (user: User | null) => void;
+  ipAddress: string;
 }
 
 interface User {
@@ -26,9 +27,10 @@ interface GlobalProviderProps {
 export const GlobalProvider = ({ children }: GlobalProviderProps) => {
   const [isLogged, setIsLogged] = useState(false);
   const [user, setUser] = useState<User | null>(null); // Added state
+  const ipAddress = "192.168.0.194:8000"
 
   return (
-    <GlobalContext.Provider value={{ isLogged, setIsLogged, user, setUser }}>
+    <GlobalContext.Provider value={{ isLogged, setIsLogged, user, setUser, ipAddress }}>
       {children}
     </GlobalContext.Provider>
   );

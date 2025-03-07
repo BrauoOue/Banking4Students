@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "white",
     },
     formContainer: {
         width: "80%",
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
         color: "#555",
     },
     payButton: {
-        backgroundColor: "bg-primary",
+        backgroundColor: "green",
         padding: 15,
         borderRadius: 5,
         alignItems: "center",

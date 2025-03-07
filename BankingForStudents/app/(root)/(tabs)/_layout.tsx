@@ -174,6 +174,69 @@ const TabsLayout = () => {
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="grants"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="grants"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+              name="subscriptions"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="subscriptions"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="send"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="send"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="request"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="request"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="notifications"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="notifications"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="transactions"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="transactions"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="bill/scan-bill"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/scan-bill"/>
+                    ),
+                }}
+            />
         </Tabs>
     );
 };

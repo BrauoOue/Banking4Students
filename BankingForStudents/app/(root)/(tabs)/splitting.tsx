@@ -33,11 +33,12 @@ const Splitting = () => {
     const handleScanAction = () => {
         if (modalType === "create") {
             console.log("Scanning Bill..."); // Handle scanning for Create Bill
+            router.replace("/bill/scan-bill");
         } else if (modalType === "join") {
             console.log("Scanning QR Code..."); // Handle scanning for Join Bill
         }
         setModalVisible(false); // Close modal after scanning
-        router.replace("/bill/create-bill");
+        // router.replace("/bill/create-bill");
     };
 
     const handleCreateBill = () => {

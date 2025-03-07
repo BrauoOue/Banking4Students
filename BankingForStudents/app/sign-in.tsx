@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Alert, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {Picker} from "@react-native-picker/picker";
@@ -9,39 +9,31 @@ import {useGlobalContext} from "@/lib/global-provider";
 
 const SignIn = () => {
     const router = useRouter();
-    const {isLogged, setIsLogged, setUser} = useGlobalContext();
+    const {isLogged, setIsLogged, setUser, ipAddress} = useGlobalContext();
+    const [users, setUsers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(2);
 
-    const users = [
-        {
-            id: 1,
-            email: "kostadinoskiviktor@yahoo.com",
-            name: "Viktor",
-            surname: "Kostadinoski",
-            ssn: "2402003440000",
-            points: 100,
-            attending_university: 1,
-        },
-        {
-            id: 2,
-            email: "andrea@yahoo.com",
-            name: "Andrea",
-            surname: "Stevanoska",
-            ssn: "123",
-            points: 200,
-            attending_university: 1,
-        },
-        {
-            id: 3,
-            email: "nikola@yahoo.com",
-            name: "Nikola",
-            surname: "Jagurinoski",
-            ssn: "456",
-            points: 100,
-            attending_university: 1,
-        },
-    ];
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(
+                    `http://${ipAddress}/api/main/user-list/`
+                );
 
-    const [selectedUserId, setSelectedUserId] = useState(users[0].id);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                const data = await response.json();
+                setUsers(data);
+                setSelectedUserId(data[0].id)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const handleLogin = async () => {
         const selectedUser = users.find((user) => user.id === selectedUserId);
@@ -50,14 +42,14 @@ const SignIn = () => {
             return;
         }
 
-        setUser(selectedUser); // Store user globally
+        setUser(selectedUser);
         setIsLogged(true);
-        router.replace("/"); // Redirect to Home
+        router.replace("/");
     };
 
     return (
         <SafeAreaView className="bg-white h-full">
-            <ScrollView contentContainerStyle={{ flexGrow: 1, }}>
+            <ScrollView contentContainerStyle={{flexGrow: 1,}}>
                 <View className="flex justify-center items-center mt-[12vh]">
                     <Image source={images.logo} className="w-2/3 h-10/23" resizeMode="contain"/>
                 </View>
