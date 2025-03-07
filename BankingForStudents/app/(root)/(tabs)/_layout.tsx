@@ -238,6 +238,15 @@ const TabsLayout = () => {
                 }}
             />
             <Tabs.Screen
+                name="bill/scan-qr"
+                options={{
+                    href: null,
+                    tabBarIcon: ({focused}) => (
+                        <TabIcon focused={focused} icon={icons.person} title="bill/scan-qr"/>
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="bill/join-bill"
                 options={{
                     href: null,

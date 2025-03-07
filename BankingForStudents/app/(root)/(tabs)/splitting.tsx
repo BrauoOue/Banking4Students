@@ -97,6 +97,8 @@ const Splitting = () => {
       router.replace("/bill/scan-bill");
     } else if (modalType === "join") {
       console.log("Scanning QR Code..."); // Handle scanning for Join Bill
+
+      router.replace("/bill/scan-qr");
     }
     setModalVisible(false); // Close modal after scanning
     // router.replace("/bill/create-bill");
