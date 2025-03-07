@@ -3,6 +3,7 @@ import {View, Text, TouchableOpacity, FlatList, Image, ScrollView} from "react-n
 import {Picker} from "@react-native-picker/picker";
 import icons from "@/constants/icons";
 import { useRouter } from "expo-router";
+import {useLocalSearchParams } from "expo-router/build/hooks";
 
 const colors = ["bg-accent", "bg-red-400", "bg-green-400", "bg-yellow-400", "bg-orange-400"];
 
@@ -30,7 +31,9 @@ const billItems = [
 ];
 
 const BillSplitting = () => {
-    const router = useRouter()
+    // const params = useLocalSearchParams ();
+    // const messager = params.qr;
+    const router = useRouter();
     const [billType, setBillType] = useState(billDropdown[0]);
     const [method, setMethod] = useState(methodDropdown[0]);
     const [selectedItems, setSelectedItems] = useState([]);
@@ -124,6 +127,9 @@ const BillSplitting = () => {
                 <Text className="text-white text-center">Pay Bill</Text>
             </TouchableOpacity>
 
+            {/*<Image className="w-10 h-10"*/}
+            {/*    source={messager}>*/}
+            {/*</Image>*/}
 
         </ScrollView>
     );
