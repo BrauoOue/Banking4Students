@@ -28,7 +28,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = ["id", "transaction_acc_pays", "receiver_email", "amount", "date", "type", "category"]
 
     def get_receiver_email(self, obj):
-        a=1
+        a = 1
         """Get the email of the user associated with transaction_acc_receives."""
         # return obj.transaction_acc_receives.trans_owner.email if obj.transaction_acc_receives.user else None
         return User.objects.get(id=obj.transaction_acc_receives.trans_owner.id).email
@@ -36,8 +36,25 @@ class TransactionSerializer(serializers.ModelSerializer):
         # return "ABC"
 
 
+class OwentTransactionSerializer(serializers.ModelSerializer):
+    receiver_email = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OwentTransaction
+        fields = ["id", "transaction_acc_pays", "receiver_email", "amount", "date", "type", "category"]
+
+        def get_receiver_email(self, obj):
+            a = 1
+            """Get the email of the user associated with transaction_acc_receives."""
+            # return obj.transaction_acc_receives.trans_owner.email if obj.transaction_acc_receives.user else None
+            return User.objects.get(id=obj.transaction_acc_receives.trans_owner.id).email
+            # obj.transaction_acc_receives.trans_owner
+            # return "ABC"
+
+
 class TransactionAccSerializer(serializers.ModelSerializer):
     bank_name = serializers.CharField(source="bank.name", read_only=True)
+
     # owner_email = serializers.SerializerMethodField()
 
     class Meta:
