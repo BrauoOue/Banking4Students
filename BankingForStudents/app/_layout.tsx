@@ -1,12 +1,11 @@
-import {SplashScreen, Stack, useRouter} from "expo-router";
+import {SplashScreen, Stack} from "expo-router";
 import {useFonts} from "expo-font";
-import "./globals.css"
+import "./globals.css";
 import {useEffect, useState} from "react";
 import GlobalProvider from "@/lib/global-provider";
 
 export default function RootLayout() {
     const [isMounted, setIsMounted] = useState(false);
-
     const [fontsLoaded] = useFonts({
         "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
         "Rubik-ExtraBold": require("../assets/fonts/Rubik-ExtraBold.ttf"),
@@ -20,13 +19,28 @@ export default function RootLayout() {
         if (fontsLoaded) {
             SplashScreen.hideAsync();
         }
+
+        // Fetch and log the IP address
+        const getIpAddress = async () => {
+            try {
+                const response = await fetch("https://api.ipify.org?format=json");
+                const data = await response.json();
+                console.log("Your IP Address is:", data.ip);
+            } catch (error) {
+                console.error("Failed to fetch IP address:", error);
+            }
+        };
+
+        getIpAddress();
     }, [fontsLoaded]);
+
     if (!fontsLoaded) {
         return null;
     }
 
-    // return <Stack screenOptions={{headerShown: false}}/>
-    return <GlobalProvider>
-         <Stack screenOptions={{headerShown: false}}/>
-    </GlobalProvider>;
+    return (
+        <GlobalProvider>
+            <Stack screenOptions={{headerShown: false}} />
+        </GlobalProvider>
+    );
 }
